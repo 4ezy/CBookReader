@@ -13,5 +13,6 @@ namespace CBookReader
     /// </summary>
     public partial class App : Application
     {
+
     }
 }

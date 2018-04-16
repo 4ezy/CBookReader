@@ -6,6 +6,31 @@
         xmlns:local="clr-namespace:CBookReader"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style x:Key="basicArrowStyle" TargetType="Polyline">
+            <Setter Property="Grid.Row" Value="1"/>
+            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="StrokeThickness" Value="10"/>
+            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="Points" Value="0, 0 30, 30 0, 60"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="StrokeLineJoin" Value="Round"/>
+            <Setter Property="StrokeStartLineCap" Value="Round"/>
+            <Setter Property="StrokeEndLineCap" Value="Round"/>
+            <Setter Property="Panel.ZIndex" Value="1"/>
+            <Setter Property="Visibility" Value="Hidden"/>
+            <Setter Property="Opacity" Value="0.80"/>
+        </Style>
+        <Style x:Key="basicRectStyle" TargetType="Rectangle">
+            <Setter Property="Grid.Row" Value="1"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Panel.ZIndex" Value="2"/>
+            <Setter Property="Fill" Value="Transparent"/>
+            <EventSetter Event="MouseEnter" Handler="Rectangle_MouseEnter"/>
+            <EventSetter Event="MouseLeave" Handler="Rectangle_MouseLeave"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -15,22 +40,19 @@
         <Menu Grid.Row="0">
             <MenuItem Header="Файл"></MenuItem>
         </Menu>
-        <ToolBar Grid.Row="2">
-            <Button MaxHeight="32" Content="Toolbar"/>
-        </ToolBar>
-        <Button Grid.Row="1" Background="Transparent" BorderBrush="Transparent"
-                HorizontalAlignment="Left" Panel.ZIndex="1">
-            <Image Source="Resources/back.png" MaxWidth="32"/>
-        </Button>
-        <Polyline Grid.Row="1" Stroke="Black" StrokeThickness="10" Points="0, 0 25, 25 0, 50"
-                  HorizontalAlignment="Right" Panel.ZIndex="1"
-                  VerticalAlignment="Center" Margin="0,0,5,0" StrokeLineJoin="Round" StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
-        <!--<Button Grid.Row="1" Background="Transparent" BorderBrush="Transparent"
-                HorizontalAlignment="Right" Panel.ZIndex="1">
-            <Image Source="Resources/next.png" MaxWidth="32"/>
-        </Button>-->
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1">
-            <Image Source="Resources/pic.jpg" Stretch="Fill"/>
+        <Rectangle x:Name="backRect" HorizontalAlignment="Left"
+                    Style="{StaticResource basicRectStyle}"/>
+        <Polyline x:Name="backPoly" Style="{StaticResource basicArrowStyle}"
+                  HorizontalAlignment="Left" Margin="5,0,0,0" FlowDirection="RightToLeft"/>
+        <Rectangle x:Name="nextRect" HorizontalAlignment="Right"
+                    Style="{StaticResource basicRectStyle}"/>
+        <Polyline x:Name="nextPoly" Style="{StaticResource basicArrowStyle}"
+                  HorizontalAlignment="Right" Margin="0,0,5,0" FlowDirection="LeftToRight"/>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+            <Image Source="Images/pic.jpg" Stretch="Fill"/>
         </ScrollViewer>
+        <ToolBar Grid.Row="2" MaxHeight="32">
+            <Button Content="Toolbar"/>
+        </ToolBar>
     </Grid>
 </Window>

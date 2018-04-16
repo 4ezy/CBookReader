@@ -24,5 +24,25 @@ namespace CBookReader
         {
             InitializeComponent();
         }
+
+        private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Rectangle rectangle = sender as Rectangle;
+
+            if (rectangle == backRect)
+                backPoly.Visibility = Visibility.Visible;
+            else
+                nextPoly.Visibility = Visibility.Visible;
+        }
+
+        private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Rectangle rectangle = sender as Rectangle;
+
+            if (rectangle == backRect)
+                backPoly.Visibility = Visibility.Hidden;
+            else
+                nextPoly.Visibility = Visibility.Hidden;
+        }
     }
 }
