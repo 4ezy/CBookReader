@@ -7,6 +7,30 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="Файл"></MenuItem>
+        </Menu>
+        <ToolBar Grid.Row="2">
+            <Button MaxHeight="32" Content="Toolbar"/>
+        </ToolBar>
+        <Button Grid.Row="1" Background="Transparent" BorderBrush="Transparent"
+                HorizontalAlignment="Left" Panel.ZIndex="1">
+            <Image Source="Resources/back.png" MaxWidth="32"/>
+        </Button>
+        <Polyline Grid.Row="1" Stroke="Black" StrokeThickness="10" Points="0, 0 25, 25 0, 50"
+                  HorizontalAlignment="Right" Panel.ZIndex="1"
+                  VerticalAlignment="Center" Margin="0,0,5,0" StrokeLineJoin="Round" StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
+        <!--<Button Grid.Row="1" Background="Transparent" BorderBrush="Transparent"
+                HorizontalAlignment="Right" Panel.ZIndex="1">
+            <Image Source="Resources/next.png" MaxWidth="32"/>
+        </Button>-->
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1">
+            <Image Source="Resources/pic.jpg" Stretch="Fill"/>
+        </ScrollViewer>
     </Grid>
 </Window>
