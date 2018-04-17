@@ -7,50 +7,51 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
-        <!--<Line X1="1.5" Y1="0" X2="1.5" Y2="16" Stroke="Black" StrokeThickness="3"/>
-        <Polygon Points="1,8 13,1 13,15" Stroke="Black" StrokeThickness="1" Fill="Black"/>-->
-        <Style x:Key="toolbarButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="32"/>
-        </Style>
-        <Style x:Key="basicLineIconStyle" TargetType="Line">
-            <Setter Property="X1" Value="1.5"/>
-            <Setter Property="Y1" Value="0"/>
-            <Setter Property="X2" Value="1.5"/>
-            <Setter Property="Y2" Value="16"/>
-            <Setter Property="Stroke" Value="Black"/>
-            <Setter Property="StrokeThickness" Value="3"/>
-        </Style>
-        <Style x:Key="basicTriangleIconStyle" TargetType="Polygon">
-            <Setter Property="Points" Value="1,8 13,1 13,15"/>
-            <Setter Property="Stroke" Value="Black"/>
-            <Setter Property="StrokeThickness" Value="1"/>
-            <Setter Property="Fill" Value="Black"/>
-        </Style>
-        <Style x:Key="basicArrowStyle" TargetType="Polyline">
-            <Setter Property="Grid.Row" Value="1"/>
-            <Setter Property="Stroke" Value="Black"/>
-            <Setter Property="StrokeThickness" Value="10"/>
-            <Setter Property="Stroke" Value="Black"/>
-            <Setter Property="Opacity" Value="0.8"/>
-            <Setter Property="Points" Value="0,0 30,30 0,60"/>
-            <Setter Property="Width" Value="60"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="StrokeLineJoin" Value="Round"/>
-            <Setter Property="StrokeStartLineCap" Value="Round"/>
-            <Setter Property="StrokeEndLineCap" Value="Round"/>
-            <Setter Property="Panel.ZIndex" Value="1"/>
-            <Setter Property="Visibility" Value="Hidden"/>
-        </Style>
-        <Style x:Key="basicRectStyle" TargetType="Rectangle">
-            <Setter Property="Grid.Row" Value="1"/>
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="Panel.ZIndex" Value="2"/>
-            <Setter Property="Fill" Value="Black"/>
-            <Setter Property="Opacity" Value="0"/>
-            <EventSetter Event="MouseEnter" Handler="Rectangle_MouseEnter"/>
-            <EventSetter Event="MouseLeave" Handler="Rectangle_MouseLeave"/>
-        </Style>
+    <Style x:Key="toolbarButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="32"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+    <Style x:Key="basicLineIconStyle" TargetType="Line">
+        <Setter Property="X1" Value="1.5"/>
+        <Setter Property="Y1" Value="0"/>
+        <Setter Property="X2" Value="1.5"/>
+        <Setter Property="Y2" Value="16"/>
+        <Setter Property="Stroke" Value="Black"/>
+        <Setter Property="StrokeThickness" Value="3"/>
+    </Style>
+    <Style x:Key="basicTriangleIconStyle" TargetType="Polygon">
+        <Setter Property="Points" Value="1,8 13,1 13,15"/>
+        <Setter Property="Stroke" Value="Black"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="Fill" Value="Black"/>
+    </Style>
+    <Style x:Key="basicArrowStyle" TargetType="Polyline">
+        <Setter Property="Grid.Row" Value="1"/>
+        <Setter Property="Stroke" Value="Black"/>
+        <Setter Property="StrokeThickness" Value="10"/>
+        <Setter Property="Stroke" Value="Black"/>
+        <Setter Property="Opacity" Value="0.8"/>
+        <Setter Property="Points" Value="0,0 30,30 0,60"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="StrokeLineJoin" Value="Round"/>
+        <Setter Property="StrokeStartLineCap" Value="Round"/>
+        <Setter Property="StrokeEndLineCap" Value="Round"/>
+        <Setter Property="Panel.ZIndex" Value="1"/>
+        <Setter Property="Visibility" Value="Hidden"/>
+    </Style>
+    <Style x:Key="basicRectStyle" TargetType="Rectangle">
+        <Setter Property="Grid.Row" Value="1"/>
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="Panel.ZIndex" Value="2"/>
+        <Setter Property="Fill" Value="Black"/>
+        <Setter Property="Opacity" Value="0"/>
+        <EventSetter Event="MouseEnter" Handler="Rectangle_MouseEnter"/>
+        <EventSetter Event="MouseLeave" Handler="Rectangle_MouseLeave"/>
+    </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -105,10 +106,11 @@
         <Polyline x:Name="nextPoly" Style="{StaticResource basicArrowStyle}"
                   HorizontalAlignment="Right" Margin="0,0,5,0"
                   FlowDirection="LeftToRight"/>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalContentAlignment="Stretch">
             <Image Source="Images/pic.jpg" Stretch="Fill"/>
         </ScrollViewer>
-        <ToolBar Grid.Row="2" ToolBarTray.IsLocked="True" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+                 HorizontalAlignment="Center" Background="White">
             <Button Style="{StaticResource toolbarButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <Line Style="{StaticResource basicLineIconStyle}"/>
@@ -127,6 +129,6 @@
                     <Line Style="{StaticResource basicLineIconStyle}"/>
                 </StackPanel>
             </Button>
-        </ToolBar>
+        </StackPanel>
     </Grid>
 </Window>
