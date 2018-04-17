@@ -30,9 +30,15 @@ namespace CBookReader
             Rectangle rectangle = sender as Rectangle;
 
             if (rectangle == backRect)
+            {
+                backRect.Opacity = 0.2;
                 backPoly.Visibility = Visibility.Visible;
+            }
             else if (rectangle == nextRect)
+            {
+                nextRect.Opacity = 0.2;
                 nextPoly.Visibility = Visibility.Visible;
+            }
         }
 
         private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
@@ -40,9 +46,15 @@ namespace CBookReader
             Rectangle rectangle = sender as Rectangle;
 
             if (rectangle == backRect)
+            {
+                backRect.Opacity = 0;
                 backPoly.Visibility = Visibility.Hidden;
+            }
             else if (rectangle == nextRect)
+            {
+                nextRect.Opacity = 0;
                 nextPoly.Visibility = Visibility.Hidden;
+            }
         }
     }
 }
