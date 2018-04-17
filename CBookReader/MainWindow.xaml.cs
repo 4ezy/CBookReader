@@ -31,7 +31,7 @@ namespace CBookReader
 
             if (rectangle == backRect)
                 backPoly.Visibility = Visibility.Visible;
-            else
+            else if (rectangle == nextRect)
                 nextPoly.Visibility = Visibility.Visible;
         }
 
@@ -41,7 +41,7 @@ namespace CBookReader
 
             if (rectangle == backRect)
                 backPoly.Visibility = Visibility.Hidden;
-            else
+            else if (rectangle == nextRect)
                 nextPoly.Visibility = Visibility.Hidden;
         }
     }

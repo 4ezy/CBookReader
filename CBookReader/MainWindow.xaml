@@ -11,19 +11,19 @@
             <Setter Property="Grid.Row" Value="1"/>
             <Setter Property="Stroke" Value="Black"/>
             <Setter Property="StrokeThickness" Value="10"/>
-            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="Stroke" Value="#CC000000"/>
             <Setter Property="Points" Value="0, 0 30, 30 0, 60"/>
+            <Setter Property="Width" Value="60"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="StrokeLineJoin" Value="Round"/>
             <Setter Property="StrokeStartLineCap" Value="Round"/>
             <Setter Property="StrokeEndLineCap" Value="Round"/>
             <Setter Property="Panel.ZIndex" Value="1"/>
             <Setter Property="Visibility" Value="Hidden"/>
-            <Setter Property="Opacity" Value="0.80"/>
         </Style>
         <Style x:Key="basicRectStyle" TargetType="Rectangle">
             <Setter Property="Grid.Row" Value="1"/>
-            <Setter Property="Width" Value="150"/>
+            <Setter Property="Width" Value="100"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Panel.ZIndex" Value="2"/>
             <Setter Property="Fill" Value="Transparent"/>
@@ -38,16 +38,52 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
-            <MenuItem Header="Файл"></MenuItem>
+            <MenuItem Header="Файл">
+                <MenuItem Header="Открыть..."/>
+                <Separator/>
+                <MenuItem Header="Сохранить..."/>
+                <MenuItem Header="Сохранить все..."/>
+                <Separator/>
+                <MenuItem Header="Закрыть"/>
+                <Separator/>
+                <MenuItem Header="Во весь экран"/>
+                <MenuItem Header="Свернуть"/>
+                <MenuItem Header="Выход"/>
+            </MenuItem>
+            <MenuItem Header="Управление">
+                <MenuItem Header="Следующая страница"/>
+                <MenuItem Header="Предыдущая страница"/>
+                <MenuItem Header="Первая страница"/>
+                <MenuItem Header="Последняя страница"/>
+                <Separator/>
+                <MenuItem Header="Прокрутка вверх"/>
+                <MenuItem Header="Прокрутка вниз"/>
+                <MenuItem Header="Прокрутка влево"/>
+                <MenuItem Header="Прокрутка вправо"/>
+                <Separator/>
+                <MenuItem Header="Ползунок"/>
+            </MenuItem>
+            <MenuItem Header="Изображение">
+                <MenuItem Header="Яркость"/>
+                <MenuItem Header="Контраст"/>
+                <MenuItem Header="Масштаб"/>
+                <MenuItem Header="Поворот"/>
+            </MenuItem>
+            <MenuItem Header="Настройки"></MenuItem>
+            <MenuItem Header="Справка">
+                <MenuItem Header="О программе"/>
+            </MenuItem>
         </Menu>
         <Rectangle x:Name="backRect" HorizontalAlignment="Left"
                     Style="{StaticResource basicRectStyle}"/>
         <Polyline x:Name="backPoly" Style="{StaticResource basicArrowStyle}"
-                  HorizontalAlignment="Left" Margin="5,0,0,0" FlowDirection="RightToLeft"/>
+                  HorizontalAlignment="Left" Margin="5,0,0,0"
+                  FlowDirection="RightToLeft"/>
         <Rectangle x:Name="nextRect" HorizontalAlignment="Right"
                     Style="{StaticResource basicRectStyle}"/>
         <Polyline x:Name="nextPoly" Style="{StaticResource basicArrowStyle}"
-                  HorizontalAlignment="Right" Margin="0,0,5,0" FlowDirection="LeftToRight"/>
+                  HorizontalAlignment="Right" Margin="0,0,5,0"
+                  FlowDirection="LeftToRight"/>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
             <Image Source="Images/pic.jpg" Stretch="Fill"/>
         </ScrollViewer>
