@@ -28,33 +28,45 @@ namespace CBookReader
         private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
         {
             Rectangle rectangle = sender as Rectangle;
-
-            if (rectangle == backRect)
-            {
-                backRect.Opacity = 0.2;
-                backPoly.Visibility = Visibility.Visible;
-            }
-            else if (rectangle == nextRect)
-            {
-                nextRect.Opacity = 0.2;
-                nextPoly.Visibility = Visibility.Visible;
-            }
+            rectangle.Fill = new SolidColorBrush(Colors.Black);
         }
 
         private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
         {
             Rectangle rectangle = sender as Rectangle;
+            rectangle.Fill = new SolidColorBrush(Colors.Transparent);
+        }
 
-            if (rectangle == backRect)
+        private void ToolbarButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Button button = sender as Button;
+            button.Effect = new System.Windows.Media.Effects.DropShadowEffect
             {
-                backRect.Opacity = 0;
-                backPoly.Visibility = Visibility.Hidden;
-            }
-            else if (rectangle == nextRect)
+                Color = Colors.Black,
+                ShadowDepth = 1
+            };
+        }
+
+        private void ToolbarButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Button button = sender as Button;
+            button.Effect = null;
+        }
+
+        private void ToolbarButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Button button = sender as Button;
+            button.Effect = null;
+        }
+
+        private void ToolbarButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Button button = sender as Button;
+            button.Effect = new System.Windows.Media.Effects.DropShadowEffect
             {
-                nextRect.Opacity = 0;
-                nextPoly.Visibility = Visibility.Hidden;
-            }
+                Color = Colors.Black,
+                ShadowDepth = 1
+            };
         }
     }
 }
