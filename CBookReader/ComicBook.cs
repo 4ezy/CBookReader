@@ -13,24 +13,60 @@ namespace CBookReader
     internal sealed class ComicBook
     {
         public List<BitmapImage> Pages { get; set; }
-        private readonly List<string> aviableFormats = new List<string>
+        public event Action CurrentPageChanged;
+        public static List<string> AviableArchiveFormats => aviableArchiveFormats;
+        public static List<string> AviableComicFormats => aviableComicFormats;
+        public static List<string> AviableImageFormats => aviableImageFormats;
+        private int currentPage;
+
+        public int CurrentPage
+        {
+            set
+            {
+                this.currentPage = value;
+                CurrentPageChanged();
+            }
+
+            get => currentPage;
+        }
+
+        private static readonly List<string> aviableArchiveFormats = new List<string>
+        {
+            ".rar",
+            ".zip",
+            ".tar",
+            ".7zip"
+        };
+
+        private static readonly List<string> aviableComicFormats = new List<string>
+        {
+            ".cbr",
+            ".cbz",
+            ".cbt",
+            ".cb7"
+        };
+
+        private static readonly List<string> aviableImageFormats = new List<string>
         {
             ".jpg",
-            ".jfif",
-            ".jpe",
             ".jpeg",
             ".bmp",
-            ".dib",
-            ".rle",
+            ".png",
             ".gif",
             ".tif",
             ".tiff"
         };
 
-        public ComicBook() => this.Pages = new List<BitmapImage>();
-        public ComicBook(List<BitmapImage> pages) => this.Pages = pages;
+        public ComicBook()
+        {
+            this.Pages = new List<BitmapImage>();
+            this.currentPage = -1;
+        }
 
-        public void UnpackAll(string path)
+        public ComicBook(List<BitmapImage> pages) : this() =>
+            this.Pages = pages ?? throw new ArgumentNullException();
+
+        public void UnpackAllPages(string path)
         {
             using (Stream stream = File.OpenRead(path))
             using (var reader = ReaderFactory.Open(stream))
@@ -42,7 +78,7 @@ namespace CBookReader
                         string ext = reader.Entry.Key.Substring(
                             reader.Entry.Key.LastIndexOf('.'));
 
-                        if (aviableFormats.Contains(ext))
+                        if (ComicBook.AviableImageFormats.Contains(ext))
                         {
                             using (MemoryStream ms = new MemoryStream((int)reader.Entry.Size))
                             {

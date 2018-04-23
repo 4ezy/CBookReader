@@ -65,7 +65,7 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
             <MenuItem Header="Файл">
-                <MenuItem Header="Открыть..."/>
+                <MenuItem x:Name="openMenuItem" Header="Открыть..." Click="OpenMenuItem_Click"/>
                 <Separator/>
                 <MenuItem Header="Сохранить..."/>
                 <MenuItem Header="Сохранить все..."/>
@@ -120,20 +120,20 @@
             <Image Stretch="Fill" x:Name="image"/>
         </ScrollViewer>
         <StackPanel Grid.Row="2" Orientation="Horizontal"
-                 HorizontalAlignment="Center" Background="White">
-            <Button Style="{StaticResource toolbarButtonStyle}">
+                 HorizontalAlignment="Center">
+            <Button Style="{StaticResource toolbarButtonStyle}" x:Name="firstButton" Click="FirstButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <Line Style="{StaticResource basicLineIconStyle}"/>
                     <Polygon Style="{StaticResource basicTriangleIconStyle}"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource toolbarButtonStyle}">
+            <Button Style="{StaticResource toolbarButtonStyle}" x:Name="backButton" Click="BackButton_Click">
                 <Polygon Style="{StaticResource basicTriangleIconStyle}"/>
             </Button>
-            <Button Style="{StaticResource toolbarButtonStyle}">
+            <Button Style="{StaticResource toolbarButtonStyle}" x:Name="nextButton" Click="NextButton_Click">
                 <Polygon Style="{StaticResource basicTriangleIconStyle}" FlowDirection="RightToLeft"/>
             </Button>
-            <Button Style="{StaticResource toolbarButtonStyle}">
+            <Button Style="{StaticResource toolbarButtonStyle}" x:Name="lastButton" Click="LastButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <Polygon Style="{StaticResource basicTriangleIconStyle}" FlowDirection="RightToLeft"/>
                     <Line Style="{StaticResource basicLineIconStyle}"/>
