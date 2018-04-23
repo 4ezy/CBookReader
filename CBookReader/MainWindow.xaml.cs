@@ -20,6 +20,8 @@ namespace CBookReader
     /// </summary>
     public partial class MainWindow : Window
     {
+        ComicBook comicBook = new ComicBook();
+
         public MainWindow()
         {
             InitializeComponent();

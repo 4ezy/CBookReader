@@ -117,7 +117,7 @@
                   FlowDirection="LeftToRight" Stroke="{Binding Fill, ElementName=nextRect}"
                   Visibility="{Binding Visibility, ElementName=nextRect}"/>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalContentAlignment="Stretch">
-            <Image Source="Images/pic.jpg" Stretch="Fill"/>
+            <Image Stretch="Fill" x:Name="image"/>
         </ScrollViewer>
         <StackPanel Grid.Row="2" Orientation="Horizontal"
                  HorizontalAlignment="Center" Background="White">
