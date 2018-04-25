@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBookReader"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <Window.Resources>
         <Style x:Key="toolbarButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32"/>
@@ -67,14 +68,23 @@
             <MenuItem Header="Файл">
                 <MenuItem x:Name="openMenuItem" Header="Открыть..." Click="OpenMenuItem_Click"/>
                 <Separator/>
-                <MenuItem Header="Сохранить..."/>
-                <MenuItem Header="Сохранить все..."/>
+                <MenuItem x:Name="saveMenuItem" IsEnabled="False"
+                          Header="Сохранить..." Click="SaveMenuItem_Click"/>
+                <MenuItem x:Name="saveAllMenuItem" IsEnabled="False"
+                          Header="Сохранить все...">
+                    <MenuItem x:Name="allAsJpegMenuItem" Header="В формате JPEG" Click="AllAsJpegMenuItem_Click"/>
+                    <MenuItem x:Name="allAsPngMenuItem" Header="В формате PNG" Click="AllAsPngMenuItem_Click"/>
+                    <MenuItem x:Name="allAsBmpMenuItem" Header="В формате BMP" Click="AllAsBmpMenuItem_Click"/>
+                    <MenuItem x:Name="allAsGifMenuItem" Header="В формате GIF" Click="AllAsGifMenuItem_Click"/>
+                    <MenuItem x:Name="allAsTiffMenuItem" Header="В формате TIFF" Click="AllAsTiffMenuItem_Click"/>
+                </MenuItem>
                 <Separator/>
-                <MenuItem Header="Закрыть"/>
+                <MenuItem x:Name="closeMenuItem" IsEnabled="False" Header="Закрыть" Click="CloseMenuItem_Click"/>
                 <Separator/>
-                <MenuItem Header="Во весь экран"/>
-                <MenuItem Header="Свернуть"/>
-                <MenuItem Header="Выход"/>
+                <MenuItem x:Name="fullscreenMenuItem" Header="Во весь экран" Click="FullscreenMenuItem_Click" IsCheckable="True"/>
+                <MenuItem x:Name="maximizeMenuItem" Header="Развернуть" Click="MaximizeMenuItem_Click"/>
+                <MenuItem x:Name="minimizeMenuItem" Header="Свернуть" Click="MinimizeMenuItem_Click"/>
+                <MenuItem x:Name="exitMenuItem" Header="Выход" Click="ExitMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="Управление">
                 <MenuItem Header="Следующая страница"/>
@@ -105,19 +115,19 @@
             </MenuItem>
         </Menu>
         <Rectangle x:Name="backRect" HorizontalAlignment="Left"
-                    Style="{StaticResource basicRectStyle}"/>
+                    Style="{StaticResource basicRectStyle}" MouseLeftButtonUp="BackRect_MouseLeftButtonUp"/>
         <Polyline x:Name="backPoly" Style="{StaticResource basicArrowStyle}"
                   HorizontalAlignment="Left" Margin="5,0,0,0"
                   FlowDirection="RightToLeft" Stroke="{Binding Fill, ElementName=backRect}"
                   Visibility="{Binding Visibility, ElementName=backRect}"/>
         <Rectangle x:Name="nextRect" HorizontalAlignment="Right"
-                    Style="{StaticResource basicRectStyle}"/>
+                    Style="{StaticResource basicRectStyle}" MouseLeftButtonUp="NextRect_MouseLeftButtonUp"/>
         <Polyline x:Name="nextPoly" Style="{StaticResource basicArrowStyle}"
                   HorizontalAlignment="Right" Margin="0,0,5,0"
                   FlowDirection="LeftToRight" Stroke="{Binding Fill, ElementName=nextRect}"
                   Visibility="{Binding Visibility, ElementName=nextRect}"/>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalContentAlignment="Stretch">
-            <Image Stretch="Fill" x:Name="image"/>
+            <Image x:Name="image" Stretch="None"/>
         </ScrollViewer>
         <StackPanel Grid.Row="2" Orientation="Horizontal"
                  HorizontalAlignment="Center">

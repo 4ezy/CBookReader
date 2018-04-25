@@ -27,7 +27,7 @@ namespace CBookReader
                 CurrentPageChanged();
             }
 
-            get => currentPage;
+            get => this.currentPage;
         }
 
         private static readonly List<string> aviableArchiveFormats = new List<string>
