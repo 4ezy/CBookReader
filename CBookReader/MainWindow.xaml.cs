@@ -132,35 +132,23 @@ namespace CBookReader
             };
         }
 
-        private void FirstButton_Click(object sender, RoutedEventArgs e)
-        {
+        private void FirstButton_Click(object sender, RoutedEventArgs e) =>
             this.FirstPage();
-        }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
+        private void BackButton_Click(object sender, RoutedEventArgs e) =>
             this.BackPage();
-        }
 
-        private void NextButton_Click(object sender, RoutedEventArgs e)
-        {
+        private void NextButton_Click(object sender, RoutedEventArgs e) =>
             this.NextPage();
-        }
 
-        private void LastButton_Click(object sender, RoutedEventArgs e)
-        {
+        private void LastButton_Click(object sender, RoutedEventArgs e) =>
             this.LastPage();
-        }
 
-        private void BackRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
+        private void BackRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) =>
             this.BackPage();
-        }
 
-        private void NextRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
+        private void NextRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) =>
             this.NextPage();
-        }
 
         private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -259,8 +247,6 @@ namespace CBookReader
 
                     using (FileStream fs = new FileStream(sfd.FileName, FileMode.Create))
                         encoder.Save(fs);
-
-                    MessageBox.Show("Файл сохранён", "Успех");
                 }
             }
         }
@@ -285,7 +271,7 @@ namespace CBookReader
             System.Windows.Forms.FolderBrowserDialog fbd =
                 new System.Windows.Forms.FolderBrowserDialog()
                 {
-                    Description = "Сохранить все",
+                    Description = "Выберите папку для сохранения файлов",
                     ShowNewFolderButton = true
                 };
 
@@ -329,8 +315,6 @@ namespace CBookReader
                         fbd.SelectedPath + "\\" + i + ext, FileMode.Create))
                         encoder.Save(fs);
                 }
-
-                MessageBox.Show("Все файлы сохранены в указанную папку", "Успех");
             }
         }
 
@@ -341,6 +325,7 @@ namespace CBookReader
             this.closeMenuItem.IsEnabled = false;
             this.ComicBook.Pages.Clear();
             this.ComicBook.CurrentPage = -1;
+            this.image.Source = null;
         }
 
         private void FullscreenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -353,19 +338,95 @@ namespace CBookReader
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
         }
 
-        private void MaximizeMenuItem_Click(object sender, RoutedEventArgs e)
-        {
+        private void MaximizeMenuItem_Click(object sender, RoutedEventArgs e) =>
             this.WindowState = WindowState.Maximized;
-        }
 
-        private void MinimizeMenuItem_Click(object sender, RoutedEventArgs e)
-        {
+        private void MinimizeMenuItem_Click(object sender, RoutedEventArgs e) =>
             this.WindowState = WindowState.Minimized;
+
+        private void ExitMenuItem_Click(object sender, RoutedEventArgs e) =>
+            this.Close();
+
+        private void NextPageMenuItem_Click(object sender, RoutedEventArgs e) =>
+            this.NextPage();
+
+        private void BackPageMenuItem_Click(object sender, RoutedEventArgs e) =>
+            this.BackPage();
+
+        private void FirstPageMenuItem_Click(object sender, RoutedEventArgs e) =>
+            this.FirstPage();
+
+        private void LastPageMenuItem_Click(object sender, RoutedEventArgs e) =>
+            this.LastPage();
+
+        private void VerticalScrollVisibleMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.verticalScrollVisibleMenuItem.IsChecked)
+            {
+                this.imageScroll.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+                this.nextRect.Margin = new Thickness(
+                    this.nextRect.Margin.Left,
+                    this.nextRect.Margin.Top,
+                    this.nextRect.Margin.Right + 17,
+                    this.nextRect.Margin.Bottom);
+                this.nextPoly.Margin = new Thickness(
+                    this.nextPoly.Margin.Left,
+                    this.nextPoly.Margin.Top,
+                    this.nextPoly.Margin.Right + 17,
+                    this.nextPoly.Margin.Bottom);
+            }
+            else
+            {
+                this.imageScroll.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                this.nextRect.Margin = new Thickness(
+                    this.nextRect.Margin.Left,
+                    this.nextRect.Margin.Top,
+                    this.nextRect.Margin.Right - 17,
+                    this.nextRect.Margin.Bottom);
+                this.nextPoly.Margin = new Thickness(
+                    this.nextPoly.Margin.Left,
+                    this.nextPoly.Margin.Top,
+                    this.nextPoly.Margin.Right - 17,
+                    this.nextPoly.Margin.Bottom);
+            }
         }
 
-        private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
+        private void HorizontalScrollVisibleMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            if (this.horizontalScrollVisibleMenuItem.IsChecked)
+                this.imageScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+            else
+                this.imageScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
+        }
+
+        private void ToolbarVisibleMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.toolbarVisibleMenuItem.IsChecked)
+                this.toolbarStackPanel.Visibility = Visibility.Collapsed;
+            else
+                this.toolbarStackPanel.Visibility = Visibility.Visible;
+        }
+
+        private void ArrowsVisibleMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.arrowsVisibleMenuItem.IsChecked)
+            {
+                this.backRect.Visibility = Visibility.Collapsed;
+                this.nextRect.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.backRect.Visibility = Visibility.Visible;
+                this.nextRect.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void MenuVisibleMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.menuVisibleMenuItem.IsChecked)
+                this.menu.Visibility = Visibility.Collapsed;
+            else
+                this.menu.Visibility = Visibility.Visible;
         }
     }
 
