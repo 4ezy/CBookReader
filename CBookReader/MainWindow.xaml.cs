@@ -35,30 +35,30 @@ namespace CBookReader
 
                 if (this.ComicBook.CurrentPage == 0)
                 {
-                    this.firstButton.IsEnabled = false;
-                    this.backButton.IsEnabled = false;
+                    this.firstPageMenuItem.IsEnabled = false;
+                    this.backPageMenuItem.IsEnabled = false;
                     this.backPoly.Visibility = Visibility.Collapsed;
                     this.backRect.Visibility = Visibility.Collapsed;
                 }
                 else if (this.ComicBook.CurrentPage > 0)
                 {
-                    this.firstButton.IsEnabled = true;
-                    this.backButton.IsEnabled = true;
+                    this.firstPageMenuItem.IsEnabled = true;
+                    this.backPageMenuItem.IsEnabled = true;
                     this.backPoly.Visibility = Visibility.Visible;
                     this.backRect.Visibility = Visibility.Visible;
                 }
 
                 if (this.ComicBook.CurrentPage == this.ComicBook.Pages.Count - 1)
                 {
-                    this.lastButton.IsEnabled = false;
-                    this.nextButton.IsEnabled = false;
+                    this.lastPageMenuItem.IsEnabled = false;
+                    this.nextPageMenuItem.IsEnabled = false;
                     this.nextPoly.Visibility = Visibility.Collapsed;
                     this.nextRect.Visibility = Visibility.Collapsed;
                 }
                 else if (this.ComicBook.CurrentPage < this.ComicBook.Pages.Count - 1)
                 {
-                    this.lastButton.IsEnabled = true;
-                    this.nextButton.IsEnabled = true;
+                    this.lastPageMenuItem.IsEnabled = true;
+                    this.nextPageMenuItem.IsEnabled = true;
                     this.nextPoly.Visibility = Visibility.Visible;
                     this.nextRect.Visibility = Visibility.Visible;
                 }
@@ -402,31 +402,31 @@ namespace CBookReader
         private void ToolbarVisibleMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (this.toolbarVisibleMenuItem.IsChecked)
-                this.toolbarStackPanel.Visibility = Visibility.Collapsed;
-            else
                 this.toolbarStackPanel.Visibility = Visibility.Visible;
+            else
+                this.toolbarStackPanel.Visibility = Visibility.Collapsed;
         }
 
         private void ArrowsVisibleMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (this.arrowsVisibleMenuItem.IsChecked)
             {
-                this.backRect.Visibility = Visibility.Collapsed;
-                this.nextRect.Visibility = Visibility.Collapsed;
+                this.backRect.Visibility = Visibility.Visible;
+                this.nextRect.Visibility = Visibility.Visible;
             }
             else
             {
-                this.backRect.Visibility = Visibility.Visible;
-                this.nextRect.Visibility = Visibility.Visible;
+                this.backRect.Visibility = Visibility.Collapsed;
+                this.nextRect.Visibility = Visibility.Collapsed;
             }
         }
 
         private void MenuVisibleMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (this.menuVisibleMenuItem.IsChecked)
-                this.menu.Visibility = Visibility.Collapsed;
-            else
                 this.menu.Visibility = Visibility.Visible;
+            else
+                this.menu.Visibility = Visibility.Collapsed;
         }
     }
 

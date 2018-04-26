@@ -7,6 +7,66 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Window.ContextMenu>
+        <ContextMenu>
+
+            <MenuItem Header="Файл">
+                <MenuItem x:Name="openMenuItem" Header="Открыть..." Click="OpenMenuItem_Click"/>
+                <Separator/>
+                <MenuItem x:Name="saveMenuItem" IsEnabled="False"
+                          Header="Сохранить..." Click="SaveMenuItem_Click"/>
+                <MenuItem x:Name="saveAllMenuItem" IsEnabled="False"
+                          Header="Сохранить все...">
+                    <MenuItem x:Name="allAsJpegMenuItem" Header="В формате JPEG" Click="AllAsJpegMenuItem_Click"/>
+                    <MenuItem x:Name="allAsPngMenuItem" Header="В формате PNG" Click="AllAsPngMenuItem_Click"/>
+                    <MenuItem x:Name="allAsBmpMenuItem" Header="В формате BMP" Click="AllAsBmpMenuItem_Click"/>
+                    <MenuItem x:Name="allAsGifMenuItem" Header="В формате GIF" Click="AllAsGifMenuItem_Click"/>
+                    <MenuItem x:Name="allAsTiffMenuItem" Header="В формате TIFF" Click="AllAsTiffMenuItem_Click"/>
+                </MenuItem>
+                <Separator/>
+                <MenuItem x:Name="closeMenuItem" IsEnabled="False" Header="Закрыть" Click="CloseMenuItem_Click"/>
+                <Separator/>
+                <MenuItem x:Name="fullscreenMenuItem" Header="Во весь экран"
+                          Click="FullscreenMenuItem_Click" IsCheckable="True"/>
+                <MenuItem x:Name="maximizeMenuItem" Header="Развернуть" Click="MaximizeMenuItem_Click"/>
+                <MenuItem x:Name="minimizeMenuItem" Header="Свернуть" Click="MinimizeMenuItem_Click"/>
+                <MenuItem x:Name="exitMenuItem" Header="Выход" Click="ExitMenuItem_Click"/>
+            </MenuItem>
+            <MenuItem Header="Управление">
+                <MenuItem x:Name="nextPageMenuItem" Header="Следующая страница" Click="NextPageMenuItem_Click"/>
+                <MenuItem x:Name="backPageMenuItem" Header="Предыдущая страница" Click="BackPageMenuItem_Click"/>
+                <MenuItem x:Name="firstPageMenuItem" Header="Первая страница" Click="FirstPageMenuItem_Click"/>
+                <MenuItem x:Name="lastPageMenuItem" Header="Последняя страница" Click="LastPageMenuItem_Click"/>
+                <Separator/>
+                <MenuItem Header="Прокрутка вверх"/>
+                <MenuItem Header="Прокрутка вниз"/>
+                <MenuItem Header="Прокрутка влево"/>
+                <MenuItem Header="Прокрутка вправо"/>
+            </MenuItem>
+            <MenuItem Header="Изображение">
+                <MenuItem Header="Яркость"/>
+                <MenuItem Header="Контраст"/>
+                <MenuItem Header="Масштаб"/>
+                <MenuItem Header="Поворот"/>
+            </MenuItem>
+            <MenuItem Header="Интерфейс">
+                <MenuItem x:Name="menuVisibleMenuItem" Header="Меню" IsChecked="True"
+                          Click="MenuVisibleMenuItem_Click" IsCheckable="True"/>
+                <MenuItem x:Name="toolbarVisibleMenuItem" Header="Панель управления" IsChecked="True"
+                          Click="ToolbarVisibleMenuItem_Click" IsCheckable="True"/>
+                <MenuItem x:Name="arrowsVisibleMenuItem" Header="Боковые стрелки" IsChecked="True"
+                          Click="ArrowsVisibleMenuItem_Click" IsCheckable="True"/>
+                <Separator/>
+                <MenuItem x:Name="verticalScrollVisibleMenuItem" Header="Вертикальный ползунок"
+                          Click="VerticalScrollVisibleMenuItem_Click" IsCheckable="True"/>
+                <MenuItem x:Name="horizontalScrollVisibleMenuItem" Header="Горизонтальный ползунок"
+                          Click="HorizontalScrollVisibleMenuItem_Click" IsCheckable="True"/>
+            </MenuItem>
+            <MenuItem Header="Справка">
+                <MenuItem Header="О программе"/>
+            </MenuItem>
+        </ContextMenu>
+    </Window.ContextMenu>
     <Window.Resources>
         <Style x:Key="toolbarButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32"/>
@@ -65,32 +125,37 @@
         </Grid.RowDefinitions>
         <Menu x:Name="menu" Grid.Row="0">
             <MenuItem Header="Файл">
-                <MenuItem x:Name="openMenuItem" Header="Открыть..." Click="OpenMenuItem_Click"/>
+                <MenuItem Header="Открыть..." Click="OpenMenuItem_Click"/>
                 <Separator/>
-                <MenuItem x:Name="saveMenuItem" IsEnabled="False"
-                          Header="Сохранить..." Click="SaveMenuItem_Click"/>
-                <MenuItem x:Name="saveAllMenuItem" IsEnabled="False"
-                          Header="Сохранить все...">
-                    <MenuItem x:Name="allAsJpegMenuItem" Header="В формате JPEG" Click="AllAsJpegMenuItem_Click"/>
-                    <MenuItem x:Name="allAsPngMenuItem" Header="В формате PNG" Click="AllAsPngMenuItem_Click"/>
-                    <MenuItem x:Name="allAsBmpMenuItem" Header="В формате BMP" Click="AllAsBmpMenuItem_Click"/>
-                    <MenuItem x:Name="allAsGifMenuItem" Header="В формате GIF" Click="AllAsGifMenuItem_Click"/>
-                    <MenuItem x:Name="allAsTiffMenuItem" Header="В формате TIFF" Click="AllAsTiffMenuItem_Click"/>
+                <MenuItem Header="Сохранить..." Click="SaveMenuItem_Click" 
+                          IsEnabled="{Binding IsEnabled, ElementName=saveMenuItem}"/>
+                <MenuItem Header="Сохранить все..."
+                          IsEnabled="{Binding IsEnabled, ElementName=saveAllMenuItem}">
+                    <MenuItem Header="В формате JPEG" Click="AllAsJpegMenuItem_Click"/>
+                    <MenuItem Header="В формате PNG" Click="AllAsPngMenuItem_Click"/>
+                    <MenuItem Header="В формате BMP" Click="AllAsBmpMenuItem_Click"/>
+                    <MenuItem Header="В формате GIF" Click="AllAsGifMenuItem_Click"/>
+                    <MenuItem Header="В формате TIFF" Click="AllAsTiffMenuItem_Click"/>
                 </MenuItem>
                 <Separator/>
-                <MenuItem x:Name="closeMenuItem" IsEnabled="False" Header="Закрыть" Click="CloseMenuItem_Click"/>
+                <MenuItem Header="Закрыть" Click="CloseMenuItem_Click"
+                          IsEnabled="{Binding IsEnabled, ElementName=closeMenuItem}"/>
                 <Separator/>
-                <MenuItem x:Name="fullscreenMenuItem" Header="Во весь экран"
-                          Click="FullscreenMenuItem_Click" IsCheckable="True"/>
-                <MenuItem x:Name="maximizeMenuItem" Header="Развернуть" Click="MaximizeMenuItem_Click"/>
-                <MenuItem x:Name="minimizeMenuItem" Header="Свернуть" Click="MinimizeMenuItem_Click"/>
-                <MenuItem x:Name="exitMenuItem" Header="Выход" Click="ExitMenuItem_Click"/>
+                <MenuItem Header="Во весь экран" Click="FullscreenMenuItem_Click" IsCheckable="True"
+                          IsChecked="{Binding IsChecked, ElementName=fullscreenMenuItem}"/>
+                <MenuItem Header="Развернуть" Click="MaximizeMenuItem_Click"/>
+                <MenuItem Header="Свернуть" Click="MinimizeMenuItem_Click"/>
+                <MenuItem Header="Выход" Click="ExitMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="Управление">
-                <MenuItem x:Name="nextPageMenuItem" Header="Следующая страница" Click="NextPageMenuItem_Click"/>
-                <MenuItem x:Name="backPageMenuItem" Header="Предыдущая страница" Click="BackPageMenuItem_Click"/>
-                <MenuItem x:Name="firstPageMenuItem" Header="Первая страница" Click="FirstPageMenuItem_Click"/>
-                <MenuItem x:Name="lastPageMenuItem" Header="Последняя страница" Click="LastPageMenuItem_Click"/>
+                <MenuItem Header="Следующая страница" Click="NextPageMenuItem_Click" 
+                                      IsEnabled="{Binding IsEnabled, ElementName=nextPageMenuItem}"/>
+                <MenuItem Header="Предыдущая страница" Click="BackPageMenuItem_Click"
+                                      IsEnabled="{Binding IsEnabled, ElementName=backPageMenuItem}"/>
+                <MenuItem Header="Первая страница" Click="FirstPageMenuItem_Click"
+                                      IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}"/>
+                <MenuItem Header="Последняя страница" Click="LastPageMenuItem_Click"
+                                      IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}"/>
                 <Separator/>
                 <MenuItem Header="Прокрутка вверх"/>
                 <MenuItem Header="Прокрутка вниз"/>
@@ -104,17 +169,19 @@
                 <MenuItem Header="Поворот"/>
             </MenuItem>
             <MenuItem Header="Интерфейс">
-                <MenuItem x:Name="menuVisibleMenuItem" Header="Меню" 
-                          Click="MenuVisibleMenuItem_Click" IsCheckable="True"/>
-                <MenuItem x:Name="toolbarVisibleMenuItem" Header="Панель управления"
-                          Click="ToolbarVisibleMenuItem_Click" IsCheckable="True"/>
-                <MenuItem x:Name="arrowsVisibleMenuItem" Header="Боковые стрелки" 
-                          Click="ArrowsVisibleMenuItem_Click" IsCheckable="True"/>
+                <MenuItem Header="Меню" Click="MenuVisibleMenuItem_Click" IsCheckable="True"
+                                      IsChecked="{Binding IsChecked, ElementName=menuVisibleMenuItem}"/>
+                <MenuItem Header="Панель управления" Click="ToolbarVisibleMenuItem_Click" IsCheckable="True" 
+                                      IsChecked="{Binding IsChecked, ElementName=toolbarVisibleMenuItem}"/>
+                <MenuItem Header="Боковые стрелки" Click="ArrowsVisibleMenuItem_Click" IsCheckable="True"
+                                      IsChecked="{Binding IsChecked, ElementName=arrowsVisibleMenuItem}"/>
                 <Separator/>
-                <MenuItem x:Name="verticalScrollVisibleMenuItem" Header="Вертикальный ползунок"
-                          Click="VerticalScrollVisibleMenuItem_Click" IsCheckable="True"/>
-                <MenuItem x:Name="horizontalScrollVisibleMenuItem" Header="Горизонтальный ползунок"
-                          Click="HorizontalScrollVisibleMenuItem_Click" IsCheckable="True"/>
+                <MenuItem Header="Вертикальный ползунок" Click="VerticalScrollVisibleMenuItem_Click" 
+                                      IsCheckable="True"
+                                      IsChecked="{Binding IsChecked, ElementName=verticalScrollVisibleMenuItem}"/>
+                <MenuItem Header="Горизонтальный ползунок"  Click="HorizontalScrollVisibleMenuItem_Click"
+                                      IsCheckable="True"
+                                      IsChecked="{Binding IsChecked, ElementName=horizontalScrollVisibleMenuItem}"/>
             </MenuItem>
             <MenuItem Header="Справка">
                 <MenuItem Header="О программе"/>
@@ -138,82 +205,31 @@
                       VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Hidden"
                       HorizontalContentAlignment="Stretch">
-            <Image x:Name="image" Stretch="None" Source="Images/pic.jpg">
-                <Image.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Файл">
-                            <MenuItem Header="Открыть..." Click="OpenMenuItem_Click"/>
-                            <Separator/>
-                            <MenuItem Header="Сохранить..." Click="SaveMenuItem_Click"
-                                      IsEnabled="{Binding IsEnabled, ElementName=saveMenuItem}"/>
-                            <MenuItem Header="Сохранить все..."
-                                      IsEnabled="{Binding IsEnabled, ElementName=saveAllMenuItem}">
-                                <MenuItem Header="В формате JPEG" Click="AllAsJpegMenuItem_Click"/>
-                                <MenuItem Header="В формате PNG" Click="AllAsPngMenuItem_Click"/>
-                                <MenuItem Header="В формате BMP" Click="AllAsBmpMenuItem_Click"/>
-                                <MenuItem Header="В формате GIF" Click="AllAsGifMenuItem_Click"/>
-                                <MenuItem Header="В формате TIFF" Click="AllAsTiffMenuItem_Click"/>
-                            </MenuItem>
-                            <Separator/>
-                            <MenuItem Header="Закрыть" Click="CloseMenuItem_Click"
-                                      IsEnabled="{Binding IsEnabled, ElementName=closeMenuItem}"/>
-                            <Separator/>
-                            <MenuItem Header="Во весь экран"
-                                      Click="FullscreenMenuItem_Click" IsCheckable="True"/>
-                            <MenuItem Header="Развернуть" Click="MaximizeMenuItem_Click"/>
-                            <MenuItem Header="Свернуть" Click="MinimizeMenuItem_Click"/>
-                            <MenuItem Header="Выход" Click="ExitMenuItem_Click"/>
-                        </MenuItem>
-                        <MenuItem Header="Управление">
-                            <MenuItem Header="Следующая страница" Click="NextPageMenuItem_Click"/>
-                            <MenuItem Header="Предыдущая страница" Click="BackPageMenuItem_Click"/>
-                            <MenuItem Header="Первая страница" Click="FirstPageMenuItem_Click"/>
-                            <MenuItem Header="Последняя страница" Click="LastPageMenuItem_Click"/>
-                            <Separator/>
-                            <MenuItem Header="Прокрутка вверх"/>
-                            <MenuItem Header="Прокрутка вниз"/>
-                            <MenuItem Header="Прокрутка влево"/>
-                            <MenuItem Header="Прокрутка вправо"/>
-                        </MenuItem>
-                        <MenuItem Header="Изображение">
-                            <MenuItem Header="Яркость"/>
-                            <MenuItem Header="Контраст"/>
-                            <MenuItem Header="Масштаб"/>
-                            <MenuItem Header="Поворот"/>
-                        </MenuItem>
-                        <MenuItem Header="Интерфейс">
-                            <MenuItem Header="Меню" Click="MenuVisibleMenuItem_Click" IsCheckable="True"/>
-                            <MenuItem Header="Панель управления"
-                                      Click="ToolbarVisibleMenuItem_Click" IsCheckable="True"/>
-                            <MenuItem Header="Боковые стрелки" Click="ArrowsVisibleMenuItem_Click" IsCheckable="True"/>
-                            <Separator/>
-                            <MenuItem Header="Вертикальный ползунок" 
-                                      Click="VerticalScrollVisibleMenuItem_Click" IsCheckable="True"/>
-                            <MenuItem Header="Горизонтальный ползунок" 
-                                      Click="HorizontalScrollVisibleMenuItem_Click" IsCheckable="True"/>
-                        </MenuItem>
-                        <MenuItem Header="Справка">
-                            <MenuItem Header="О программе"/>
-                        </MenuItem>
-                    </ContextMenu>
-                </Image.ContextMenu>
-            </Image>
+            <Image x:Name="image" Stretch="None" Source="Images/pic.jpg"/>
         </ScrollViewer>
         <StackPanel x:Name="toolbarStackPanel" Grid.Row="2"
                     Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Style="{StaticResource toolbarButtonStyle}" x:Name="firstButton" Click="FirstButton_Click">
+            <Button Style="{StaticResource toolbarButtonStyle}"
+                    x:Name="firstButton" Click="FirstButton_Click"
+                    IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}">
                 <StackPanel Orientation="Horizontal">
                     <Line Style="{StaticResource basicLineIconStyle}"/>
                     <Polygon Style="{StaticResource basicTriangleIconStyle}"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource toolbarButtonStyle}" x:Name="backButton" Click="BackButton_Click">
+            <Button Style="{StaticResource toolbarButtonStyle}"
+                    x:Name="backButton" Click="BackButton_Click"
+                    IsEnabled="{Binding IsEnabled, ElementName=backPageMenuItem}">
                 <Polygon Style="{StaticResource basicTriangleIconStyle}"/>
             </Button>
-            <Button Style="{StaticResource toolbarButtonStyle}" x:Name="nextButton" Click="NextButton_Click">
+            <Button Style="{StaticResource toolbarButtonStyle}"
+                    x:Name="nextButton" Click="NextButton_Click"
+                    IsEnabled="{Binding IsEnabled, ElementName=nextPageMenuItem}">
                 <Polygon Style="{StaticResource basicTriangleIconStyle}" FlowDirection="RightToLeft"/>
             </Button>
-            <Button Style="{StaticResource toolbarButtonStyle}" x:Name="lastButton" Click="LastButton_Click">
+            <Button Style="{StaticResource toolbarButtonStyle}"
+                    x:Name="lastButton" Click="LastButton_Click"
+                    IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}">
                 <StackPanel Orientation="Horizontal">
                     <Polygon Style="{StaticResource basicTriangleIconStyle}" FlowDirection="RightToLeft"/>
                     <Line Style="{StaticResource basicLineIconStyle}"/>
