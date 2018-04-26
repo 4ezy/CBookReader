@@ -37,30 +37,34 @@ namespace CBookReader
                 {
                     this.firstPageMenuItem.IsEnabled = false;
                     this.backPageMenuItem.IsEnabled = false;
-                    this.backPoly.Visibility = Visibility.Collapsed;
-                    this.backRect.Visibility = Visibility.Collapsed;
+                    
+                    if (this.arrowsVisibleMenuItem.IsChecked)
+                        this.backRect.Visibility = Visibility.Collapsed;
                 }
                 else if (this.ComicBook.CurrentPage > 0)
                 {
                     this.firstPageMenuItem.IsEnabled = true;
                     this.backPageMenuItem.IsEnabled = true;
-                    this.backPoly.Visibility = Visibility.Visible;
-                    this.backRect.Visibility = Visibility.Visible;
+
+                    if (this.arrowsVisibleMenuItem.IsChecked)
+                        this.backRect.Visibility = Visibility.Visible;
                 }
 
                 if (this.ComicBook.CurrentPage == this.ComicBook.Pages.Count - 1)
                 {
                     this.lastPageMenuItem.IsEnabled = false;
                     this.nextPageMenuItem.IsEnabled = false;
-                    this.nextPoly.Visibility = Visibility.Collapsed;
-                    this.nextRect.Visibility = Visibility.Collapsed;
+                    
+                    if (this.arrowsVisibleMenuItem.IsChecked)
+                        this.nextRect.Visibility = Visibility.Collapsed;
                 }
                 else if (this.ComicBook.CurrentPage < this.ComicBook.Pages.Count - 1)
                 {
                     this.lastPageMenuItem.IsEnabled = true;
                     this.nextPageMenuItem.IsEnabled = true;
-                    this.nextPoly.Visibility = Visibility.Visible;
-                    this.nextRect.Visibility = Visibility.Visible;
+
+                    if (this.arrowsVisibleMenuItem.IsChecked)
+                        this.nextRect.Visibility = Visibility.Visible;
                 }
             });
         }
@@ -411,8 +415,15 @@ namespace CBookReader
         {
             if (this.arrowsVisibleMenuItem.IsChecked)
             {
-                this.backRect.Visibility = Visibility.Visible;
-                this.nextRect.Visibility = Visibility.Visible;
+                if (this.ComicBook.Pages.Count - 1 == this.ComicBook.CurrentPage)
+                    this.nextRect.Visibility = Visibility.Collapsed;
+                else
+                    this.nextRect.Visibility = Visibility.Visible;
+
+                if (this.ComicBook.CurrentPage == 0)
+                    this.backRect.Visibility = Visibility.Collapsed;
+                else
+                    this.backRect.Visibility = Visibility.Visible;
             }
             else
             {
