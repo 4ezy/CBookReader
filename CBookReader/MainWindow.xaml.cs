@@ -71,24 +71,40 @@ namespace CBookReader
         private void FirstPage()
         {
             if (this.ComicBook.Pages.Count != 0)
+            {
                 this.ComicBook.CurrentPage = 0;
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+            }
         }
 
         private void BackPage()
         {
             if (this.ComicBook.Pages.Count != 0)
+            {
                 this.ComicBook.CurrentPage--;
+                this.imageScroll.ScrollToEnd();
+                this.imageScroll.ScrollToRightEnd();
+            }
         }
 
         private void NextPage()
         {
             if (this.ComicBook.Pages.Count != 0)
+            {
                 this.ComicBook.CurrentPage++;
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+            }
         }
         private void LastPage()
         {
             if (this.ComicBook.Pages.Count != 0)
+            {
                 this.ComicBook.CurrentPage = this.ComicBook.Pages.Count - 1;
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+            }
         }
 
         private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
@@ -332,9 +348,22 @@ namespace CBookReader
             MenuItem item = sender as MenuItem;
 
             if (item.IsChecked)
+            {
+                this.Visibility = Visibility.Collapsed;
+                this.WindowState = WindowState.Maximized;
+                this.ResizeMode = ResizeMode.NoResize;
                 this.WindowStyle = WindowStyle.None;
+                this.Visibility = Visibility.Visible;
+            }
             else
+            {
+                this.Visibility = Visibility.Collapsed;
+                this.ResizeMode = ResizeMode.CanResize;
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
+                this.Visibility = Visibility.Visible;
+            }
+
+            this.ResizeImage();
         }
 
         private void MaximizeMenuItem_Click(object sender, RoutedEventArgs e) =>
@@ -388,6 +417,8 @@ namespace CBookReader
                     this.nextPoly.Margin.Right - 17,
                     this.nextPoly.Margin.Bottom);
             }
+
+            this.ResizeImage();
         }
 
         private void HorizontalScrollVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -396,6 +427,8 @@ namespace CBookReader
                 this.imageScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
             else
                 this.imageScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
+
+            this.ResizeImage();
         }
 
         private void ToolbarVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -404,6 +437,8 @@ namespace CBookReader
                 this.toolbarStackPanel.Visibility = Visibility.Visible;
             else
                 this.toolbarStackPanel.Visibility = Visibility.Collapsed;
+
+            this.ResizeImage();
         }
 
         private void ArrowsVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -433,6 +468,8 @@ namespace CBookReader
                 this.menu.Visibility = Visibility.Visible;
             else
                 this.menu.Visibility = Visibility.Collapsed;
+
+            this.ResizeImage();
         }
 
         private void ResizeMenuItem_Click(object sender, RoutedEventArgs e)

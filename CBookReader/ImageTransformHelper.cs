@@ -15,15 +15,15 @@ namespace CBookReader
         public static TransformedBitmap StretchToWidth(BitmapSource image, double width)
         {
             return ImageTransformHelper.Scale(image,
-                width / 1.4 / image.PixelWidth,
-                width / 1.4 / image.PixelWidth);
+                width / 1.5 / image.PixelWidth,
+                width / 1.5 / image.PixelWidth);
         }
 
         public static TransformedBitmap StretchToHeight(BitmapSource image, double height)
         {
             return ImageTransformHelper.Scale(image,
-                height / 1.55 / image.PixelHeight,
-                height / 1.55 / image.PixelHeight);
+                height / 1.6 / image.PixelHeight,
+                height / 1.6 / image.PixelHeight);
         }
 
         public static TransformedBitmap Scale(BitmapSource image, double scaleX, double scaleY)
