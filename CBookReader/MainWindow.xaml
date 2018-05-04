@@ -91,17 +91,21 @@
                           Click="FirstPageMenuItem_Click" IsEnabled="False"/>
                 <MenuItem x:Name="lastPageMenuItem" Header="Последняя страница"
                           Click="LastPageMenuItem_Click" IsEnabled="False"/>
-                <Separator/>
-                <MenuItem Header="Прокрутка вверх"/>
-                <MenuItem Header="Прокрутка вниз"/>
-                <MenuItem Header="Прокрутка влево"/>
-                <MenuItem Header="Прокрутка вправо"/>
             </MenuItem>
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
                 <MenuItem Header="Контраст"/>
                 <MenuItem Header="Масштаб"/>
                 <MenuItem Header="Поворот"/>
+                <Separator/>
+                <MenuItem x:Name="strWidthLargeMenuItem" Header="По ширине, если большое"
+                          IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"/>
+                <MenuItem x:Name="strHeightLargeMenuItem" Header="По высоте, если большое"
+                          IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"/>
+                <MenuItem x:Name="strWidthSmallMenuItem" Header="По ширине, если маленькое"
+                          IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"/>
+                <MenuItem x:Name="strHeihtSmallMenuItem" Header="По высоте, если маленькое"
+                          IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="Интерфейс">
                 <MenuItem x:Name="menuVisibleMenuItem" Header="Меню" IsChecked="True"
@@ -160,17 +164,25 @@
                                       IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}"/>
                 <MenuItem Header="Последняя страница" Click="LastPageMenuItem_Click"
                                       IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}"/>
-                <Separator/>
-                <MenuItem Header="Прокрутка вверх"/>
-                <MenuItem Header="Прокрутка вниз"/>
-                <MenuItem Header="Прокрутка влево"/>
-                <MenuItem Header="Прокрутка вправо"/>
             </MenuItem>
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
                 <MenuItem Header="Контраст"/>
                 <MenuItem Header="Масштаб"/>
                 <MenuItem Header="Поворот"/>
+                <Separator/>
+                <MenuItem Header="По ширине, если большое" IsCheckable="True"
+                          IsChecked="{Binding IsChecked, ElementName=strWidthLargeMenuItem}"
+                          Click="ResizeMenuItem_Click"/>
+                <MenuItem Header="По высоте, если большое" IsCheckable="True"
+                          IsChecked="{Binding IsChecked, ElementName=strHeightLargeMenuItem}"
+                          Click="ResizeMenuItem_Click"/>
+                <MenuItem Header="По ширине, если маленькое" IsCheckable="True"
+                          IsChecked="{Binding IsChecked, ElementName=strWidthSmallMenuItem}"
+                          Click="ResizeMenuItem_Click"/>
+                <MenuItem Header="По высоте, если маленькое" IsCheckable="True"
+                          IsChecked="{Binding IsChecked, ElementName=strHeihtSmallMenuItem}"
+                          Click="ResizeMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="Интерфейс">
                 <MenuItem Header="Меню" Click="MenuVisibleMenuItem_Click" IsCheckable="True"
@@ -239,6 +251,14 @@
                     <Line Style="{StaticResource basicLineIconStyle}"/>
                 </StackPanel>
             </Button>
+            <ComboBox IsEditable="True" SelectedIndex="0"
+                      VerticalContentAlignment="Center" Width="55">
+                <Label Content="100%"/>
+                <Label Content="125%"/>
+                <Label Content="150%"/>
+                <Label Content="200%"/>
+                <Label Content="400%"/>
+            </ComboBox>
         </StackPanel>
     </Grid>
 </Window>

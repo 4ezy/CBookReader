@@ -30,8 +30,7 @@ namespace CBookReader
             this.ComicBook = new ComicBook();
             this.ComicBook.CurrentPageChanged += (() => 
             {
-                if (this.ComicBook.Pages.Count > 0)
-                    this.image.Source = this.ComicBook.Pages[this.ComicBook.CurrentPage];
+                this.ResizeImage();
 
                 if (this.ComicBook.CurrentPage == 0)
                 {
@@ -161,15 +160,11 @@ namespace CBookReader
                 CheckFileExists = true,
                 Title = "Открыть",
                 Multiselect = true,
-                Filter = "Все поддерживаемые (*.*)|" +
-                "*.rar;*.zip;*.tar;*.7zip;" +
-                "*.cbr;*.cbz;*.cbt;*.cb7;" +
-                "*.jpg;*.jpeg;*.bmp;" +
-                "*.png;*.gif;*.tif;*.tiff|" +
-                "Архивы (*.rar,*.zip,*.tar,*.7zip)|*.rar;*.zip;*.tar;*.7zip|" +
+                Filter =
                 "Комиксы (*.cbr,*.cbz,*.cbt,*.cb7)|*.cbr;*.cbz;*.cbt;*.cb7|" +
+                "Архивы (*.rar,*.zip,*.tar,*.7zip)|*.rar;*.zip;*.tar;*.7zip|" +
                 "Изображения (*.jpg,*.jpeg,*.bmp,*.png,*.gif,*.tif,*.tiff)|" +
-                "*.jpg;*.jpeg;*.bmp;*.png;*.gif;*.tif;*.tiff",
+                "*.jpg;*.jpeg;*.bmp;*.png;*.gif;*.tif;*.tiff"
             };
 
             if (ofd.ShowDialog() == true)
@@ -438,6 +433,39 @@ namespace CBookReader
                 this.menu.Visibility = Visibility.Visible;
             else
                 this.menu.Visibility = Visibility.Collapsed;
+        }
+
+        private void ResizeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.ResizeImage();
+        }
+
+        private void ResizeImage()
+        {
+            if (this.ComicBook.Pages.Count > 0)
+            {
+                BitmapImage page = this.ComicBook.Pages[this.ComicBook.CurrentPage];
+                bool isSizeChanged = false;
+
+                if ((this.strWidthLargeMenuItem.IsChecked && page.PixelWidth > this.ActualWidth) ||
+                    (this.strWidthSmallMenuItem.IsChecked && page.PixelWidth < this.ActualWidth))
+                {
+                    this.image.Source = ImageTransformHelper.StretchToWidth(
+                        page, this.ActualWidth);
+                    isSizeChanged = true;
+                }
+
+                if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > this.ActualHeight) ||
+                    (this.strHeihtSmallMenuItem.IsChecked && page.PixelHeight < this.ActualHeight))
+                {
+                    this.image.Source = ImageTransformHelper.StretchToHeight(
+                        page, this.ActualHeight);
+                    isSizeChanged = true;
+                }
+
+                if (!isSizeChanged)
+                    this.image.Source = page;
+            }
         }
     }
 
