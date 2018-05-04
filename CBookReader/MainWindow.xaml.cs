@@ -446,26 +446,44 @@ namespace CBookReader
             {
                 BitmapImage page = this.ComicBook.Pages[this.ComicBook.CurrentPage];
                 bool isSizeChanged = false;
+                double windowWidth = 0;
+                double windowHeight = 0;
 
-                if ((this.strWidthLargeMenuItem.IsChecked && page.PixelWidth > this.ActualWidth) ||
-                    (this.strWidthSmallMenuItem.IsChecked && page.PixelWidth < this.ActualWidth))
+                if (this.WindowState == WindowState.Maximized)
+                {
+                    windowWidth = SystemParameters.PrimaryScreenWidth;
+                    windowHeight = SystemParameters.PrimaryScreenHeight;
+                }
+                else
+                {
+                    windowWidth = this.Width;
+                    windowHeight = this.Height;
+                }
+
+                if ((this.strWidthLargeMenuItem.IsChecked && page.PixelWidth > windowWidth) ||
+                   (this.strWidthSmallMenuItem.IsChecked && page.PixelWidth < windowWidth))
                 {
                     this.image.Source = ImageTransformHelper.StretchToWidth(
-                        page, this.ActualWidth);
+                        page, windowWidth);
                     isSizeChanged = true;
                 }
 
-                if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > this.ActualHeight) ||
-                    (this.strHeihtSmallMenuItem.IsChecked && page.PixelHeight < this.ActualHeight))
+                if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > windowHeight) ||
+                    (this.strHeihtSmallMenuItem.IsChecked && page.PixelHeight < windowHeight))
                 {
                     this.image.Source = ImageTransformHelper.StretchToHeight(
-                        page, this.ActualHeight);
+                        page, windowHeight);
                     isSizeChanged = true;
                 }
 
-                if (!isSizeChanged)
-                    this.image.Source = page;
+                if (!isSizeChanged && this.image.Source != page)
+                    this.image.Source = this.ComicBook.Pages[this.ComicBook.CurrentPage];
             }
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            this.ResizeImage();
         }
     }
 

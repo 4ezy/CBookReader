@@ -28,15 +28,15 @@ namespace CBookReader
 
         public static TransformedBitmap Scale(BitmapSource image, double scaleX, double scaleY)
         {
-            int stride = (int)image.PixelWidth * (image.Format.BitsPerPixel / 8);
-            byte[] pixels = new byte[image.PixelWidth * stride];
-            image.CopyPixels(pixels, stride, 0);
+            //int stride = (int)image.PixelWidth * (image.Format.BitsPerPixel / 8);
+            //byte[] pixels = new byte[image.PixelWidth * stride];
+            //image.CopyPixels(pixels, stride, 0);
 
             TransformedBitmap transformedBitmap = new TransformedBitmap();
             transformedBitmap.BeginInit();
-            transformedBitmap.Source = BitmapSource.Create(
-                image.PixelWidth, image.PixelHeight, image.DpiX, image.DpiY,
-                image.Format, image.Palette, pixels, stride);
+            transformedBitmap.Source = image;//BitmapSource.Create(
+            //    image.PixelWidth, image.PixelHeight, image.DpiX, image.DpiY,
+            //    image.Format, image.Palette, pixels, stride);
             transformedBitmap.Transform = new ScaleTransform(scaleX, scaleY);
             transformedBitmap.EndInit();
             return transformedBitmap;

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CBookReader"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Window_SizeChanged">
     <Window.Resources>
         <Style x:Key="toolbarButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32"/>
