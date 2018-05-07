@@ -12,25 +12,31 @@ namespace CBookReader
 {
     internal static class ImageTransformHelper
     {
-        public static TransformedBitmap StretchToWidth(BitmapSource image, double width)
+        public static TransformedBitmap StretchToWidth(BitmapSource image,
+            double width, out double scaleX, out double scaleY)
         {
-            return ImageTransformHelper.Scale(image,
-                width / image.Width,
-                width / image.Width);
+            scaleX = width / image.Width;
+            scaleY = width / image.Width;
+
+            return ImageTransformHelper.Scale(image, scaleX, scaleY);
         }
 
-        public static TransformedBitmap StretchToHeight(BitmapSource image, double height)
+        public static TransformedBitmap StretchToHeight(BitmapSource image,
+            double height, out double scaleX, out double scaleY)
         {
-            return ImageTransformHelper.Scale(image,
-                height / image.Height,
-                height / image.Height);
+            scaleX = height / image.Height;
+            scaleY = height / image.Height;
+
+            return ImageTransformHelper.Scale(image, scaleX, scaleY);
         }
 
-        public static TransformedBitmap Stretch(BitmapSource image, double width, double height)
+        public static TransformedBitmap Stretch(BitmapSource image,
+            double width, double height, out double scaleX, out double scaleY)
         {
-            return ImageTransformHelper.Scale(image,
-                width / image.Width,
-                height / image.Height);
+            scaleX = width / image.Width;
+            scaleY = height / image.Height;
+
+            return ImageTransformHelper.Scale(image, scaleX, scaleY);
         }
 
         public static TransformedBitmap Scale(BitmapSource image, double scaleX, double scaleY)

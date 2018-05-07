@@ -96,18 +96,18 @@
                 <MenuItem Header="Масштаб"/>
                 <MenuItem Header="Поворот"/>
                 <Separator/>
-                <MenuItem x:Name="strWidthLargeMenuItem" Header="По ширине, если большое"
+                <MenuItem x:Name="strWidthLargeMenuItem" Header="Сжать по ширине, если большая"
                           IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"
                           StaysOpenOnClick="True"/>
-                <MenuItem x:Name="strHeightLargeMenuItem" Header="По высоте, если большое"
+                <MenuItem x:Name="strHeightLargeMenuItem" Header="Сжать по высоте, если большая"
                           IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"
                           StaysOpenOnClick="True"/>
-                <MenuItem x:Name="strWidthSmallMenuItem" Header="По ширине, если маленькое"
+                <!--<MenuItem x:Name="strWidthSmallMenuItem" Header="По ширине, если маленькое"
                           IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"
                           StaysOpenOnClick="True"/>
                 <MenuItem x:Name="strHeihtSmallMenuItem" Header="По высоте, если маленькое"
                           IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"
-                          StaysOpenOnClick="True"/>
+                          StaysOpenOnClick="True"/>-->
             </MenuItem>
             <MenuItem Header="Интерфейс">
                 <MenuItem x:Name="fullscreenMenuItem" Header="Во весь экран"
@@ -177,18 +177,18 @@
                 <MenuItem Header="Масштаб"/>
                 <MenuItem Header="Поворот"/>
                 <Separator/>
-                <MenuItem Header="По ширине, если большое" IsCheckable="True"
+                <MenuItem Header="Сжать по ширине, если большая" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strWidthLargeMenuItem}"
                           Click="ResizeMenuItem_Click" StaysOpenOnClick="True"/>
-                <MenuItem Header="По высоте, если большое" IsCheckable="True"
+                <MenuItem Header="Сжать по высоте, если большая" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strHeightLargeMenuItem}"
                           Click="ResizeMenuItem_Click" StaysOpenOnClick="True"/>
-                <MenuItem Header="По ширине, если маленькое" IsCheckable="True"
+                <!--<MenuItem Header="По ширине, если маленькое" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strWidthSmallMenuItem}"
                           Click="ResizeMenuItem_Click" StaysOpenOnClick="True"/>
                 <MenuItem Header="По высоте, если маленькое" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strHeihtSmallMenuItem}"
-                          Click="ResizeMenuItem_Click" StaysOpenOnClick="True"/>
+                          Click="ResizeMenuItem_Click" StaysOpenOnClick="True"/>-->
             </MenuItem>
             <MenuItem Header="Интерфейс">
                 <MenuItem Header="Во весь экран" Click="FullscreenMenuItem_Click" IsCheckable="True"

@@ -22,6 +22,9 @@ namespace CBookReader
     /// </summary>
     public partial class MainWindow : Window
     {
+        private double scaleX;
+        private double scaleY;
+
         enum ImageFormat
         {
             JPEG,
@@ -39,7 +42,8 @@ namespace CBookReader
             this.ComicBook = new ComicBook();
             this.ComicBook.CurrentPageChanged += (() =>
             {
-                this.ResizeImage(this.Width, this.Height);
+                Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+                this.ResizeImage(sz.Width, sz.Height);
 
                 if (this.ComicBook.CurrentPage == 0)
                 {
@@ -194,7 +198,7 @@ namespace CBookReader
                 CheckFileExists = true,
                 Title = "Открыть",
                 Multiselect = true,
-                FilterIndex = 3,    // TODO: убрать, когда будет релиз
+                FilterIndex = 3,
                 Filter =
                 "Комиксы (*.cbr,*.cbz,*.cbt,*.cb7)|*.cbr;*.cbz;*.cbt;*.cb7|" +
                 "Архивы (*.rar,*.zip,*.tar,*.7zip)|*.rar;*.zip;*.tar;*.7zip|" +
@@ -220,7 +224,11 @@ namespace CBookReader
                     }
                     else if (ComicBook.AviableImageFormats.Contains(fileExt))
                     {
-                        BitmapImage page = new BitmapImage(new Uri(path));
+                        BitmapImage page = new BitmapImage();
+                        page.BeginInit();
+                        page.CacheOption = BitmapCacheOption.OnLoad;
+                        page.UriSource = new Uri(path);
+                        page.EndInit();
                         this.ComicBook.Pages.Add(page);
                     }
                 }
@@ -229,7 +237,8 @@ namespace CBookReader
                 {
                     BitmapSource source = this.ComicBook.Pages.First();
                     this.image.Source = ImageTransformHelper.Stretch(
-                        source, source.PixelWidth, source.PixelHeight);
+                        source, source.PixelWidth, source.PixelHeight,
+                        out scaleX, out scaleY);
                     this.ComicBook.CurrentPage = 0;
                     this.saveMenuItem.IsEnabled = true;
                     this.saveAllMenuItem.IsEnabled = true;
@@ -384,7 +393,8 @@ namespace CBookReader
                 this.Visibility = Visibility.Visible;
             }
 
-            this.ResizeImage(this.Width, this.Height);
+            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+                this.ResizeImage(sz.Width, sz.Height);
         }
 
         private void MaximizeMenuItem_Click(object sender, RoutedEventArgs e) =>
@@ -427,7 +437,8 @@ namespace CBookReader
                     this.nextPoly.Margin.Bottom);
             }
 
-            this.ResizeImage(this.Width, this.Height);
+            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            this.ResizeImage(sz.Width, sz.Height);
         }
 
         private void HorizontalScrollVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -437,7 +448,8 @@ namespace CBookReader
             else
                 this.imageScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
 
-            this.ResizeImage(this.Width, this.Height);
+            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            this.ResizeImage(sz.Width, sz.Height);
         }
 
         private void ToolbarVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -447,7 +459,8 @@ namespace CBookReader
             else
                 this.toolbarStackPanel.Visibility = Visibility.Collapsed;
 
-            this.ResizeImage(this.Width, this.Height);
+            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            this.ResizeImage(sz.Width, sz.Height);
         }
 
         private void ArrowsVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -478,12 +491,24 @@ namespace CBookReader
             else
                 this.menu.Visibility = Visibility.Collapsed;
 
-            this.ResizeImage(this.Width, this.Height);
+            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            this.ResizeImage(sz.Width, sz.Height);
         }
 
         private void ResizeMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.ResizeImage(this.Width, this.Height);
+            MenuItem item = sender as MenuItem;
+
+            if (this.strWidthLargeMenuItem.IsChecked && this.strHeightLargeMenuItem.IsChecked)
+            {
+                if (item.Name.Equals(this.strWidthLargeMenuItem.Name))
+                    this.strHeightLargeMenuItem.IsChecked = false;
+                else
+                    this.strWidthLargeMenuItem.IsChecked = false;
+            }
+
+            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            this.ResizeImage(sz.Width, sz.Height);
         }
 
         private void ResizeImage(double windowWidth, double windowHeight)
@@ -494,38 +519,65 @@ namespace CBookReader
                     return;
 
                 BitmapSource page = this.ComicBook.Pages[this.ComicBook.CurrentPage];
+                BitmapSource source = this.image.Source as BitmapSource;
                 bool isSizeChanged = false;
-                double imgControlWidth = windowWidth / 1.25;
-                double imgControlHeight = windowHeight / 1.25;
 
-                if ((this.strWidthLargeMenuItem.IsChecked && page.Width > imgControlWidth) ||
-                   (this.strWidthSmallMenuItem.IsChecked && page.Width < imgControlWidth))
+                Size imageControlSize = this.GetImageControlSize(windowWidth, windowHeight);
+
+                if ((this.strWidthLargeMenuItem.IsChecked && page.PixelWidth > imageControlSize.Width))
                 {
                     this.image.Source = ImageTransformHelper.StretchToWidth(
-                        page, imgControlWidth);
+                        page, imageControlSize.Width / 1.25, out scaleX, out scaleY);
+
                     isSizeChanged = true;
                 }
 
-                if ((this.strHeightLargeMenuItem.IsChecked && page.Height > imgControlHeight) ||
-                    (this.strHeihtSmallMenuItem.IsChecked && page.Height < imgControlHeight))
+                if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > imageControlSize.Height))
                 {
                     this.image.Source = ImageTransformHelper.StretchToHeight(
-                        page, imgControlHeight);
+                        page, imageControlSize.Height / 1.25, out scaleX, out scaleY);
                     isSizeChanged = true;
                 }
 
                 if (!isSizeChanged && this.image.Source != page)
                 {
-                    BitmapImage image = this.ComicBook.Pages.First();
                     this.image.Source = ImageTransformHelper.Stretch(
-                        image, image.PixelWidth, image.PixelHeight);
+                        page, page.PixelWidth, page.PixelHeight, out scaleX, out scaleY);
                 }
             }
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.ResizeImage(e.NewSize.Width, e.NewSize.Height);
+            Size sz = this.GetTrueWindowSize(e.NewSize);
+
+            this.ResizeImage(sz.Width, sz.Height);
+        }
+
+        private Size GetTrueWindowSize(Size size)
+        {
+            Size sz = size;
+
+            if (this.WindowState == WindowState.Maximized)
+            {
+                sz.Width = SystemParameters.PrimaryScreenWidth;
+                sz.Height = SystemParameters.PrimaryScreenHeight;
+            }
+
+            return sz;
+        }
+
+        private Size GetImageControlSize(double windowWidth, double windowHeight)
+        {
+            Size sz = new Size(windowWidth, windowHeight);
+
+            if (this.imageScroll.VerticalScrollBarVisibility == ScrollBarVisibility.Visible)
+                sz.Width -= SystemParameters.VerticalScrollBarWidth;
+
+            if (this.imageScroll.HorizontalScrollBarVisibility == ScrollBarVisibility.Visible)
+                sz.Height -= SystemParameters.HorizontalScrollBarHeight;
+
+            return sz;
         }
     }
 }
