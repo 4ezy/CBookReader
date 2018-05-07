@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:CBookReader"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen" WindowState="Maximized"
-        SizeChanged="Window_SizeChanged">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Window_SizeChanged">
     <Window.Resources>
         <Style x:Key="toolbarButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32"/>
@@ -83,13 +82,13 @@
             </MenuItem>
             <MenuItem Header="Управление">
                 <MenuItem x:Name="nextPageMenuItem" Header="Следующая страница"
-                          Click="NextPageMenuItem_Click" IsEnabled="False" StaysOpenOnClick="True"/>
+                          Click="NextButton_Click" IsEnabled="False" StaysOpenOnClick="True"/>
                 <MenuItem x:Name="backPageMenuItem" Header="Предыдущая страница"
-                          Click="BackPageMenuItem_Click" IsEnabled="False" StaysOpenOnClick="True"/>
+                          Click="BackButton_Click" IsEnabled="False" StaysOpenOnClick="True"/>
                 <MenuItem x:Name="firstPageMenuItem" Header="Первая страница"
-                          Click="FirstPageMenuItem_Click" IsEnabled="False" StaysOpenOnClick="True"/>
+                          Click="FirstButton_Click" IsEnabled="False" StaysOpenOnClick="True"/>
                 <MenuItem x:Name="lastPageMenuItem" Header="Последняя страница"
-                          Click="LastPageMenuItem_Click" IsEnabled="False" StaysOpenOnClick="True"/>
+                          Click="LastButton_Click" IsEnabled="False" StaysOpenOnClick="True"/>
             </MenuItem>
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
@@ -159,16 +158,16 @@
                 <MenuItem Header="Выход" Click="ExitMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="Управление">
-                <MenuItem Header="Следующая страница" Click="NextPageMenuItem_Click" 
+                <MenuItem Header="Следующая страница" Click="NextButton_Click" 
                           IsEnabled="{Binding IsEnabled, ElementName=nextPageMenuItem}"
                           StaysOpenOnClick="True"/>
-                <MenuItem Header="Предыдущая страница" Click="BackPageMenuItem_Click"
+                <MenuItem Header="Предыдущая страница" Click="BackButton_Click"
                           IsEnabled="{Binding IsEnabled, ElementName=backPageMenuItem}"
                           StaysOpenOnClick="True"/>
-                <MenuItem Header="Первая страница" Click="FirstPageMenuItem_Click"
+                <MenuItem Header="Первая страница" Click="FirstButton_Click"
                           IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}"
                           StaysOpenOnClick="True"/>
-                <MenuItem Header="Последняя страница" Click="LastPageMenuItem_Click"
+                <MenuItem Header="Последняя страница" Click="LastButton_Click"
                           IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}"
                           StaysOpenOnClick="True"/>
             </MenuItem>

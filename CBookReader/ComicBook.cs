@@ -13,10 +13,11 @@ namespace CBookReader
     internal sealed class ComicBook
     {
         public List<BitmapImage> Pages { get; set; }
-        public event Action CurrentPageChanged;
         public static List<string> AviableArchiveFormats => aviableArchiveFormats;
         public static List<string> AviableComicFormats => aviableComicFormats;
         public static List<string> AviableImageFormats => aviableImageFormats;
+
+        public event Action CurrentPageChanged;
         private int currentPage;
 
         public int CurrentPage
@@ -95,6 +96,58 @@ namespace CBookReader
                     }
                 }
             }
+        }
+
+        public bool FirstPage()
+        {
+            bool isOperationExecuted = false;
+
+            if (this.Pages.Count != 0)
+            {
+                this.CurrentPage = 0;
+                isOperationExecuted = true;
+            }
+
+            return isOperationExecuted;
+        }
+
+        public bool BackPage()
+        {
+            bool isOperationExecuted = false;
+
+            if (this.Pages.Count != 0)
+            {
+                this.CurrentPage--;
+                isOperationExecuted = true;
+            }
+
+            return isOperationExecuted;
+        }
+
+        public bool NextPage()
+        {
+            bool isOperationExecuted = false;
+
+            if (this.Pages.Count != 0)
+            {
+                this.CurrentPage++;
+                isOperationExecuted = true;
+            }
+
+            return isOperationExecuted;
+        }
+
+        public bool LastPage()
+        {
+            bool isOperationExecuted = false;
+
+            if (this.Pages.Count != 0)
+            {
+                this.CurrentPage = this.Pages.Count - 1;
+                isOperationExecuted = true;
+            }
+
+            return isOperationExecuted;
         }
     }
 }

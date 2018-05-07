@@ -22,21 +22,30 @@ namespace CBookReader
     /// </summary>
     public partial class MainWindow : Window
     {
+        enum ImageFormat
+        {
+            JPEG,
+            PNG,
+            BMP,
+            GIF,
+            TIFF
+        }
+
         private ComicBook ComicBook { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
             this.ComicBook = new ComicBook();
-            this.ComicBook.CurrentPageChanged += (() => 
+            this.ComicBook.CurrentPageChanged += (() =>
             {
-                this.ResizeImage();
+                this.ResizeImage(this.Width, this.Height);
 
                 if (this.ComicBook.CurrentPage == 0)
                 {
                     this.firstPageMenuItem.IsEnabled = false;
                     this.backPageMenuItem.IsEnabled = false;
-                    
+
                     if (this.arrowsVisibleMenuItem.IsChecked)
                         this.backRect.Visibility = Visibility.Collapsed;
                 }
@@ -53,7 +62,7 @@ namespace CBookReader
                 {
                     this.lastPageMenuItem.IsEnabled = false;
                     this.nextPageMenuItem.IsEnabled = false;
-                    
+
                     if (this.arrowsVisibleMenuItem.IsChecked)
                         this.nextRect.Visibility = Visibility.Collapsed;
                 }
@@ -66,45 +75,6 @@ namespace CBookReader
                         this.nextRect.Visibility = Visibility.Visible;
                 }
             });
-        }
-
-        private void FirstPage()
-        {
-            if (this.ComicBook.Pages.Count != 0)
-            {
-                this.ComicBook.CurrentPage = 0;
-                this.imageScroll.ScrollToHome();
-                this.imageScroll.ScrollToLeftEnd();
-            }
-        }
-
-        private void BackPage()
-        {
-            if (this.ComicBook.Pages.Count != 0)
-            {
-                this.ComicBook.CurrentPage--;
-                this.imageScroll.ScrollToEnd();
-                this.imageScroll.ScrollToRightEnd();
-            }
-        }
-
-        private void NextPage()
-        {
-            if (this.ComicBook.Pages.Count != 0)
-            {
-                this.ComicBook.CurrentPage++;
-                this.imageScroll.ScrollToHome();
-                this.imageScroll.ScrollToLeftEnd();
-            }
-        }
-        private void LastPage()
-        {
-            if (this.ComicBook.Pages.Count != 0)
-            {
-                this.ComicBook.CurrentPage = this.ComicBook.Pages.Count - 1;
-                this.imageScroll.ScrollToHome();
-                this.imageScroll.ScrollToLeftEnd();
-            }
         }
 
         private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
@@ -151,23 +121,71 @@ namespace CBookReader
             };
         }
 
-        private void FirstButton_Click(object sender, RoutedEventArgs e) =>
-            this.FirstPage();
+        private void FirstButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.FirstPage();
 
-        private void BackButton_Click(object sender, RoutedEventArgs e) =>
-            this.BackPage();
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+            }
+        }
 
-        private void NextButton_Click(object sender, RoutedEventArgs e) =>
-            this.NextPage();
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.BackPage();
 
-        private void LastButton_Click(object sender, RoutedEventArgs e) =>
-            this.LastPage();
+            if (isOk)
+            {
+                this.imageScroll.ScrollToEnd();
+                this.imageScroll.ScrollToRightEnd();
+            }
+        }
 
-        private void BackRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) =>
-            this.BackPage();
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.NextPage();
 
-        private void NextRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) =>
-            this.NextPage();
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+            }
+        }
+
+        private void LastButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.LastPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+            }
+        }
+
+        private void BackRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            bool isOk = this.ComicBook.BackPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToEnd();
+                this.imageScroll.ScrollToRightEnd();
+            }
+        }
+
+        private void NextRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            bool isOk = this.ComicBook.NextPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+            }
+        }
 
         private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -176,6 +194,7 @@ namespace CBookReader
                 CheckFileExists = true,
                 Title = "Открыть",
                 Multiselect = true,
+                FilterIndex = 3,    // TODO: убрать, когда будет релиз
                 Filter =
                 "Комиксы (*.cbr,*.cbz,*.cbt,*.cb7)|*.cbr;*.cbz;*.cbt;*.cb7|" +
                 "Архивы (*.rar,*.zip,*.tar,*.7zip)|*.rar;*.zip;*.tar;*.7zip|" +
@@ -208,7 +227,9 @@ namespace CBookReader
 
                 if (this.ComicBook.Pages.Count != 0)
                 {
-                    this.image.Source = this.ComicBook.Pages.First();
+                    BitmapSource source = this.ComicBook.Pages.First();
+                    this.image.Source = ImageTransformHelper.Stretch(
+                        source, source.PixelWidth, source.PixelHeight);
                     this.ComicBook.CurrentPage = 0;
                     this.saveMenuItem.IsEnabled = true;
                     this.saveAllMenuItem.IsEnabled = true;
@@ -363,7 +384,7 @@ namespace CBookReader
                 this.Visibility = Visibility.Visible;
             }
 
-            this.ResizeImage();
+            this.ResizeImage(this.Width, this.Height);
         }
 
         private void MaximizeMenuItem_Click(object sender, RoutedEventArgs e) =>
@@ -374,18 +395,6 @@ namespace CBookReader
 
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e) =>
             this.Close();
-
-        private void NextPageMenuItem_Click(object sender, RoutedEventArgs e) =>
-            this.NextPage();
-
-        private void BackPageMenuItem_Click(object sender, RoutedEventArgs e) =>
-            this.BackPage();
-
-        private void FirstPageMenuItem_Click(object sender, RoutedEventArgs e) =>
-            this.FirstPage();
-
-        private void LastPageMenuItem_Click(object sender, RoutedEventArgs e) =>
-            this.LastPage();
 
         private void VerticalScrollVisibleMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -418,7 +427,7 @@ namespace CBookReader
                     this.nextPoly.Margin.Bottom);
             }
 
-            this.ResizeImage();
+            this.ResizeImage(this.Width, this.Height);
         }
 
         private void HorizontalScrollVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -428,7 +437,7 @@ namespace CBookReader
             else
                 this.imageScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
 
-            this.ResizeImage();
+            this.ResizeImage(this.Width, this.Height);
         }
 
         private void ToolbarVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -438,7 +447,7 @@ namespace CBookReader
             else
                 this.toolbarStackPanel.Visibility = Visibility.Collapsed;
 
-            this.ResizeImage();
+            this.ResizeImage(this.Width, this.Height);
         }
 
         private void ArrowsVisibleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -469,67 +478,54 @@ namespace CBookReader
             else
                 this.menu.Visibility = Visibility.Collapsed;
 
-            this.ResizeImage();
+            this.ResizeImage(this.Width, this.Height);
         }
 
         private void ResizeMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.ResizeImage();
+            this.ResizeImage(this.Width, this.Height);
         }
 
-        private void ResizeImage()
+        private void ResizeImage(double windowWidth, double windowHeight)
         {
             if (this.ComicBook.Pages.Count > 0)
             {
-                BitmapImage page = this.ComicBook.Pages[this.ComicBook.CurrentPage];
+                if (this.image.Source == null)
+                    return;
+
+                BitmapSource page = this.ComicBook.Pages[this.ComicBook.CurrentPage];
                 bool isSizeChanged = false;
-                double windowWidth = 0;
-                double windowHeight = 0;
+                double imgControlWidth = windowWidth / 1.25;
+                double imgControlHeight = windowHeight / 1.25;
 
-                if (this.WindowState == WindowState.Maximized)
-                {
-                    windowWidth = SystemParameters.PrimaryScreenWidth;
-                    windowHeight = SystemParameters.PrimaryScreenHeight;
-                }
-                else
-                {
-                    windowWidth = this.Width;
-                    windowHeight = this.Height;
-                }
-
-                if ((this.strWidthLargeMenuItem.IsChecked && page.PixelWidth > windowWidth) ||
-                   (this.strWidthSmallMenuItem.IsChecked && page.PixelWidth < windowWidth))
+                if ((this.strWidthLargeMenuItem.IsChecked && page.Width > imgControlWidth) ||
+                   (this.strWidthSmallMenuItem.IsChecked && page.Width < imgControlWidth))
                 {
                     this.image.Source = ImageTransformHelper.StretchToWidth(
-                        page, windowWidth);
+                        page, imgControlWidth);
                     isSizeChanged = true;
                 }
 
-                if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > windowHeight) ||
-                    (this.strHeihtSmallMenuItem.IsChecked && page.PixelHeight < windowHeight))
+                if ((this.strHeightLargeMenuItem.IsChecked && page.Height > imgControlHeight) ||
+                    (this.strHeihtSmallMenuItem.IsChecked && page.Height < imgControlHeight))
                 {
                     this.image.Source = ImageTransformHelper.StretchToHeight(
-                        page, windowHeight);
+                        page, imgControlHeight);
                     isSizeChanged = true;
                 }
 
                 if (!isSizeChanged && this.image.Source != page)
-                    this.image.Source = this.ComicBook.Pages[this.ComicBook.CurrentPage];
+                {
+                    BitmapImage image = this.ComicBook.Pages.First();
+                    this.image.Source = ImageTransformHelper.Stretch(
+                        image, image.PixelWidth, image.PixelHeight);
+                }
             }
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.ResizeImage();
+            this.ResizeImage(e.NewSize.Width, e.NewSize.Height);
         }
-    }
-
-    enum ImageFormat
-    {
-        JPEG,
-        PNG,
-        BMP,
-        GIF,
-        TIFF
     }
 }
