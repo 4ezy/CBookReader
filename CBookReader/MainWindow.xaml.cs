@@ -25,6 +25,8 @@ namespace CBookReader
     {
         private double scaleX;
         private double scaleY;
+        private bool isScaled;
+        private static readonly double scaleStep = 0.05;
 
         enum ImageFormat
         {
@@ -44,6 +46,7 @@ namespace CBookReader
             this.ComicBook.CurrentPageChanged += (() =>
             {
                 Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
+                this.isScaled = false;
                 this.ResizeImage(sz.Width, sz.Height);
 
                 if (this.ComicBook.CurrentPage == 0)
@@ -540,13 +543,11 @@ namespace CBookReader
                 {
                     BitmapSource src = ImageTransformHelper.StretchToWidth(
                         page, imageControlSize.Width, out scaleX, out scaleY);
-
                     this.image.Source = src;
-
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
-
                     isSizeChanged = true;
+                    isScaled = false;
                 }
 
                 if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > imageControlSize.Height) ||
@@ -554,16 +555,14 @@ namespace CBookReader
                 {
                     BitmapSource src = ImageTransformHelper.StretchToHeight(
                         page, imageControlSize.Height, out scaleX, out scaleY);
-
                     this.image.Source = src;
-
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
-
                     isSizeChanged = true;
+                    isScaled = false;
                 }
 
-                if (!isSizeChanged && this.image.Source != page)
+                if (!isSizeChanged && this.image.Source != page && !isScaled)
                 {
                     BitmapSource src = ImageTransformHelper.Stretch(
                         page, page.PixelWidth, page.PixelHeight, out scaleX, out scaleY);
@@ -614,17 +613,51 @@ namespace CBookReader
             if (this.toolbarStackPanel.Visibility == Visibility.Visible)
                 sz.Height -= this.toolbarStackPanel.Height;
 
-            //if (this.WindowState == WindowState.Maximized)
-            //    sz.Height -= 64;
-            //else if (this.WindowState == WindowState.Normal)
-            //    sz.Height -= 24;
-
-            //SystemParameters.PrimaryScreenHeight -
-            //    Forms.Screen.PrimaryScreen.WorkingArea.Height;
-
-            // TODO: сделать вычисление для меню, тулбара, верха окна (caption)
-
             return sz;
         }
+
+        private void Window_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            bool handle = (Keyboard.Modifiers & ModifierKeys.Control) > 0;
+
+            if (!handle)
+                return;
+
+            if (scaleX >= scaleStep * 2 && scaleY >= scaleStep * 2)
+            {
+                if (e.Delta > 0)
+                {
+                    this.scaleX += scaleStep;
+                    this.scaleY += scaleStep;
+                }
+                else
+                {
+                    this.scaleX -= scaleStep;
+                    this.scaleY -= scaleStep;
+                }
+            }
+            else
+            {
+                if (e.Delta > 0)
+                {
+                    this.scaleX += scaleStep;
+                    this.scaleY += scaleStep;
+                }
+            }
+
+            BitmapSource src = ImageTransformHelper.Scale(
+                this.ComicBook.Pages[this.ComicBook.CurrentPage],
+                this.scaleX, this.scaleY);
+            this.image.Source = src;
+            this.image.Width = Math.Floor(src.Width);
+            this.image.Height = Math.Floor(src.Height);
+            this.isScaled = true;
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e) =>
+            this.imageScroll.IsEnabled = false;
+
+        private void Window_PreviewKeyUp(object sender, KeyEventArgs e) =>
+            this.imageScroll.IsEnabled = true;
     }
 }
