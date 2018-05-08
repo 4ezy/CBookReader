@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using Forms = System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -42,7 +43,7 @@ namespace CBookReader
             this.ComicBook = new ComicBook();
             this.ComicBook.CurrentPageChanged += (() =>
             {
-                Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+                Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
                 this.ResizeImage(sz.Width, sz.Height);
 
                 if (this.ComicBook.CurrentPage == 0)
@@ -239,6 +240,8 @@ namespace CBookReader
                     this.image.Source = ImageTransformHelper.Stretch(
                         source, source.PixelWidth, source.PixelHeight,
                         out scaleX, out scaleY);
+                    this.image.Width = Math.Floor((double)source.PixelWidth);
+                    this.image.Height = Math.Floor((double)source.PixelHeight);
                     this.ComicBook.CurrentPage = 0;
                     this.saveMenuItem.IsEnabled = true;
                     this.saveAllMenuItem.IsEnabled = true;
@@ -393,7 +396,7 @@ namespace CBookReader
                 this.Visibility = Visibility.Visible;
             }
 
-            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
                 this.ResizeImage(sz.Width, sz.Height);
         }
 
@@ -437,7 +440,7 @@ namespace CBookReader
                     this.nextPoly.Margin.Bottom);
             }
 
-            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
             this.ResizeImage(sz.Width, sz.Height);
         }
 
@@ -448,7 +451,7 @@ namespace CBookReader
             else
                 this.imageScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
 
-            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
             this.ResizeImage(sz.Width, sz.Height);
         }
 
@@ -459,7 +462,7 @@ namespace CBookReader
             else
                 this.toolbarStackPanel.Visibility = Visibility.Collapsed;
 
-            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
             this.ResizeImage(sz.Width, sz.Height);
         }
 
@@ -491,7 +494,7 @@ namespace CBookReader
             else
                 this.menu.Visibility = Visibility.Collapsed;
 
-            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
             this.ResizeImage(sz.Width, sz.Height);
         }
 
@@ -507,7 +510,15 @@ namespace CBookReader
                     this.strWidthLargeMenuItem.IsChecked = false;
             }
 
-            Size sz = this.GetTrueWindowSize(new Size(this.Width, this.Height));
+            if (this.strWidthSmallMenuItem.IsChecked && this.strHeihtSmallMenuItem.IsChecked)
+            {
+                if (item.Name.Equals(this.strWidthSmallMenuItem.Name))
+                    this.strHeihtSmallMenuItem.IsChecked = false;
+                else
+                    this.strWidthSmallMenuItem.IsChecked = false;
+            }
+
+            Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
             this.ResizeImage(sz.Width, sz.Height);
         }
 
@@ -524,25 +535,42 @@ namespace CBookReader
 
                 Size imageControlSize = this.GetImageControlSize(windowWidth, windowHeight);
 
-                if ((this.strWidthLargeMenuItem.IsChecked && page.PixelWidth > imageControlSize.Width))
+                if ((this.strWidthLargeMenuItem.IsChecked && page.PixelWidth > imageControlSize.Width) ||
+                    this.strWidthSmallMenuItem.IsChecked && page.PixelWidth < imageControlSize.Width) 
                 {
-                    this.image.Source = ImageTransformHelper.StretchToWidth(
-                        page, imageControlSize.Width / 1.25, out scaleX, out scaleY);
+                    BitmapSource src = ImageTransformHelper.StretchToWidth(
+                        page, imageControlSize.Width, out scaleX, out scaleY);
+
+                    this.image.Source = src;
+
+                    this.image.Width = Math.Floor(src.Width);
+                    this.image.Height = Math.Floor(src.Height);
 
                     isSizeChanged = true;
                 }
 
-                if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > imageControlSize.Height))
+                if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > imageControlSize.Height) ||
+                    this.strHeihtSmallMenuItem.IsChecked && page.PixelHeight < imageControlSize.Height)
                 {
-                    this.image.Source = ImageTransformHelper.StretchToHeight(
-                        page, imageControlSize.Height / 1.25, out scaleX, out scaleY);
+                    BitmapSource src = ImageTransformHelper.StretchToHeight(
+                        page, imageControlSize.Height, out scaleX, out scaleY);
+
+                    this.image.Source = src;
+
+                    this.image.Width = Math.Floor(src.Width);
+                    this.image.Height = Math.Floor(src.Height);
+
                     isSizeChanged = true;
                 }
 
                 if (!isSizeChanged && this.image.Source != page)
                 {
-                    this.image.Source = ImageTransformHelper.Stretch(
+                    BitmapSource src = ImageTransformHelper.Stretch(
                         page, page.PixelWidth, page.PixelHeight, out scaleX, out scaleY);
+                    this.image.Source = src;
+
+                    this.image.Width = Math.Floor(src.Width);
+                    this.image.Height = Math.Floor(src.Height);
                 }
             }
         }
@@ -557,11 +585,11 @@ namespace CBookReader
         private Size GetTrueWindowSize(Size size)
         {
             Size sz = size;
-
-            if (this.WindowState == WindowState.Maximized)
+            
+            if (this.WindowStyle == WindowStyle.SingleBorderWindow)
             {
-                sz.Width = SystemParameters.PrimaryScreenWidth;
-                sz.Height = SystemParameters.PrimaryScreenHeight;
+                sz.Width -= 16;
+                sz.Height -= 16;
             }
 
             return sz;
@@ -576,6 +604,25 @@ namespace CBookReader
 
             if (this.imageScroll.HorizontalScrollBarVisibility == ScrollBarVisibility.Visible)
                 sz.Height -= SystemParameters.HorizontalScrollBarHeight;
+
+            if (this.WindowStyle == WindowStyle.SingleBorderWindow)
+                sz.Height -= SystemParameters.WindowCaptionHeight;
+
+            if (this.menu.Visibility == Visibility.Visible)
+                sz.Height -= this.menu.Height;
+
+            if (this.toolbarStackPanel.Visibility == Visibility.Visible)
+                sz.Height -= this.toolbarStackPanel.Height;
+
+            //if (this.WindowState == WindowState.Maximized)
+            //    sz.Height -= 64;
+            //else if (this.WindowState == WindowState.Normal)
+            //    sz.Height -= 24;
+
+            //SystemParameters.PrimaryScreenHeight -
+            //    Forms.Screen.PrimaryScreen.WorkingArea.Height;
+
+            // TODO: сделать вычисление для меню, тулбара, верха окна (caption)
 
             return sz;
         }
