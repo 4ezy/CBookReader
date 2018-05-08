@@ -13,9 +13,32 @@ namespace CBookReader
     internal sealed class ComicBook
     {
         public List<BitmapImage> Pages { get; set; }
-        public static List<string> AviableArchiveFormats => aviableArchiveFormats;
-        public static List<string> AviableComicFormats => aviableComicFormats;
-        public static List<string> AviableImageFormats => aviableImageFormats;
+        public static List<string> AviableArchiveFormats { get; } = new List<string>
+        {
+            ".rar",
+            ".zip",
+            ".tar",
+            ".7zip"
+        };
+
+        public static List<string> AviableComicFormats { get; } = new List<string>
+        {
+            ".cbr",
+            ".cbz",
+            ".cbt",
+            ".cb7"
+        };
+
+        public static List<string> AviableImageFormats { get; } = new List<string>
+        {
+            ".jpg",
+            ".jpeg",
+            ".bmp",
+            ".png",
+            ".gif",
+            ".tif",
+            ".tiff"
+        };
 
         public event Action CurrentPageChanged;
         private int currentPage;
@@ -30,33 +53,6 @@ namespace CBookReader
 
             get => this.currentPage;
         }
-
-        private static readonly List<string> aviableArchiveFormats = new List<string>
-        {
-            ".rar",
-            ".zip",
-            ".tar",
-            ".7zip"
-        };
-
-        private static readonly List<string> aviableComicFormats = new List<string>
-        {
-            ".cbr",
-            ".cbz",
-            ".cbt",
-            ".cb7"
-        };
-
-        private static readonly List<string> aviableImageFormats = new List<string>
-        {
-            ".jpg",
-            ".jpeg",
-            ".bmp",
-            ".png",
-            ".gif",
-            ".tif",
-            ".tiff"
-        };
 
         public ComicBook()
         {

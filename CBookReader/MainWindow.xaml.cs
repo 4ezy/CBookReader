@@ -23,9 +23,15 @@ namespace CBookReader
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ComicBook ComicBook { get; set; }
+        private Point GrabPoint { get; set; }
+        private Point UngrabPoint { get; set; }
+        private double VertScrollOffset { get; set; }
+        private double HorzScrollOffset { get; set; }
+        private bool IsImageGrabbing { get; set; }
+        private bool IsScaled { get; set; }
         private double scaleX;
         private double scaleY;
-        private bool isScaled;
         private static readonly double scaleStep = 0.05;
 
         enum ImageFormat
@@ -37,16 +43,15 @@ namespace CBookReader
             TIFF
         }
 
-        private ComicBook ComicBook { get; set; }
-
         public MainWindow()
         {
             InitializeComponent();
             this.ComicBook = new ComicBook();
+            this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grab.cur");
             this.ComicBook.CurrentPageChanged += (() =>
             {
                 Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
-                this.isScaled = false;
+                this.IsScaled = false;
                 this.ResizeImage(sz.Width, sz.Height);
 
                 if (this.ComicBook.CurrentPage == 0)
@@ -547,7 +552,7 @@ namespace CBookReader
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
                     isSizeChanged = true;
-                    isScaled = false;
+                    IsScaled = false;
                 }
 
                 if ((this.strHeightLargeMenuItem.IsChecked && page.PixelHeight > imageControlSize.Height) ||
@@ -559,10 +564,10 @@ namespace CBookReader
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
                     isSizeChanged = true;
-                    isScaled = false;
+                    IsScaled = false;
                 }
 
-                if (!isSizeChanged && this.image.Source != page && !isScaled)
+                if (!isSizeChanged && this.image.Source != page && !IsScaled)
                 {
                     BitmapSource src = ImageTransformHelper.Stretch(
                         page, page.PixelWidth, page.PixelHeight, out scaleX, out scaleY);
@@ -651,7 +656,7 @@ namespace CBookReader
             this.image.Source = src;
             this.image.Width = Math.Floor(src.Width);
             this.image.Height = Math.Floor(src.Height);
-            this.isScaled = true;
+            this.IsScaled = true;
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e) =>
@@ -659,5 +664,59 @@ namespace CBookReader
 
         private void Window_PreviewKeyUp(object sender, KeyEventArgs e) =>
             this.imageScroll.IsEnabled = true;
+
+        private static Cursor LoadCursorFromResource(string resourceName)
+        {
+            CursorConverter cc = new CursorConverter();
+            Cursor cursor = cc.ConvertFrom(resourceName) as Cursor;
+            return cursor;
+        }
+
+        private void Image_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grabbing.cur");
+            this.HorzScrollOffset = this.imageScroll.HorizontalOffset;
+            this.VertScrollOffset = this.imageScroll.VerticalOffset;
+            Point pt = Mouse.GetPosition(this.imageScroll);
+            pt.X += this.HorzScrollOffset;
+            pt.Y += this.VertScrollOffset;
+            this.GrabPoint = pt;
+            this.IsImageGrabbing = true;
+        }
+
+        private void Image_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.UngrabImage();
+        }
+
+        private void Image_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (IsImageGrabbing)
+            {
+                Point newPoint = Mouse.GetPosition(this.imageScroll);
+                newPoint.X += this.HorzScrollOffset;
+                newPoint.Y += this.VertScrollOffset;
+
+                double horzOffset = this.GrabPoint.X - newPoint.X;
+                double vertOffset = this.GrabPoint.Y - newPoint.Y;
+
+                this.imageScroll.ScrollToVerticalOffset(
+                        this.VertScrollOffset + vertOffset);
+
+                this.imageScroll.ScrollToHorizontalOffset(
+                        this.HorzScrollOffset + horzOffset);
+            }
+        }
+
+        private void Image_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.UngrabImage();
+        }
+
+        private void UngrabImage()
+        {
+            this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grab.cur");
+            this.IsImageGrabbing = false;
+        }
     }
 }

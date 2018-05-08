@@ -103,7 +103,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\pic.jpg" />
+    <Resource Include="Resources\Cursors\grab.cur" />
+    <Resource Include="Resources\Cursors\grabbing.cur" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

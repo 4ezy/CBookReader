@@ -235,7 +235,10 @@
                       VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Hidden"
                       HorizontalContentAlignment="Stretch">
-            <Image x:Name="image" Stretch="None"/>
+            <Image x:Name="image" Stretch="None"
+                   PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown"
+                   PreviewMouseLeftButtonUp="Image_PreviewMouseLeftButtonUp"
+                   PreviewMouseMove="Image_PreviewMouseMove" MouseLeave="Image_MouseLeave"/>
         </ScrollViewer>
         <StackPanel x:Name="toolbarStackPanel" Grid.Row="2" Height="32"
                     Orientation="Horizontal" HorizontalAlignment="Center">
