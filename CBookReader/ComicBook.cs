@@ -12,7 +12,7 @@ namespace CBookReader
 {
     internal sealed class ComicBook
     {
-        public List<BitmapImage> Pages { get; set; }
+        public List<BitmapSource> Pages { get; set; }
         public static List<string> AviableArchiveFormats { get; } = new List<string>
         {
             ".rar",
@@ -56,11 +56,11 @@ namespace CBookReader
 
         public ComicBook()
         {
-            this.Pages = new List<BitmapImage>();
+            this.Pages = new List<BitmapSource>();
             this.currentPage = -1;
         }
 
-        public ComicBook(List<BitmapImage> pages) : this() =>
+        public ComicBook(List<BitmapSource> pages) : this() =>
             this.Pages = pages ?? throw new ArgumentNullException();
 
         public void UnpackAllPages(string path)
