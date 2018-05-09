@@ -105,8 +105,8 @@
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
                 <MenuItem Header="Контраст"/>
-                <MenuItem Header="Масштаб"/>
-                <MenuItem Header="Поворот"/>
+                <MenuItem Header="Поворот" Click="RotateMenuItem_Click"
+                          StaysOpenOnClick="True"/>
                 <Separator/>
                 <MenuItem x:Name="strWidthLargeMenuItem" Header="Сжать по ширине, если большое"
                           Style="{StaticResource resizingMenuItemStyle}"/>
@@ -182,8 +182,8 @@
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
                 <MenuItem Header="Контраст"/>
-                <MenuItem Header="Масштаб"/>
-                <MenuItem Header="Поворот"/>
+                <MenuItem x:Name="rotateMenuItem" Header="Поворот"
+                          Click="RotateMenuItem_Click" StaysOpenOnClick="True"/>
                 <Separator/>
                 <MenuItem Header="Сжать по ширине, если большое" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strWidthLargeMenuItem}"
@@ -253,9 +253,11 @@
                 <TextBox x:Name="pageNumberTextBox" VerticalContentAlignment="Center" Margin="0, 5, 0, 5"
                          Width="30" HorizontalContentAlignment="Center"
                          PreviewTextInput="PageNumberTextBox_PreviewTextInput"
-                         DataObject.Pasting="OnPasting" PreviewKeyUp="PageNumberTextBox_PreviewKeyUp" GotFocus="PageNumberTextBox_GotFocus" LostFocus="PageNumberTextBox_LostFocus" HorizontalAlignment="Right"/>
+                         DataObject.Pasting="OnPasting" PreviewKeyUp="PageNumberTextBox_PreviewKeyUp"
+                         GotFocus="PageNumberTextBox_GotFocus" LostFocus="PageNumberTextBox_LostFocus"
+                         HorizontalAlignment="Right"/>
                 <Label x:Name="pageCountLabel" Height="{Binding Height,ElementName=toolbarStackPanel}"
-                       VerticalContentAlignment="Center" Margin="0,0,10,0"/>
+                       VerticalContentAlignment="Center" Margin="0,0,10,0" HorizontalAlignment="Right"/>
             </StackPanel>
             <Button Style="{StaticResource toolbarButtonStyle}"
                     x:Name="firstButton" Click="FirstButton_Click"

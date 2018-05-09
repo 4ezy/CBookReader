@@ -143,6 +143,7 @@ namespace CBookReader
             {
                 this.imageScroll.ScrollToHome();
                 this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
             }
         }
 
@@ -154,6 +155,7 @@ namespace CBookReader
             {
                 this.imageScroll.ScrollToEnd();
                 this.imageScroll.ScrollToRightEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
             }
         }
 
@@ -165,6 +167,7 @@ namespace CBookReader
             {
                 this.imageScroll.ScrollToHome();
                 this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
             }
         }
 
@@ -176,6 +179,7 @@ namespace CBookReader
             {
                 this.imageScroll.ScrollToHome();
                 this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
             }
         }
 
@@ -255,7 +259,7 @@ namespace CBookReader
                     this.saveMenuItem.IsEnabled = true;
                     this.saveAllMenuItem.IsEnabled = true;
                     this.closeMenuItem.IsEnabled = true;
-                    this.pageCountLabel.Content = this.ComicBook.Pages.Count;
+                    this.pageCountLabel.Content = "/" + this.ComicBook.Pages.Count.ToString();
                     this.pageNumberTextBox.Text = "1";
                 }
             }
@@ -385,6 +389,8 @@ namespace CBookReader
             this.ComicBook.Pages.Clear();
             this.ComicBook.CurrentPage = -1;
             this.image.Source = null;
+            this.pageNumberTextBox.Text = "0";
+            this.pageCountLabel.Content = "/0";
         }
 
         private void FullscreenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -777,11 +783,20 @@ namespace CBookReader
             {
                 this.pageNumberTextBox.Text = "0";
             }
-            else if (textBox.Text == string.Empty ||
-                textBox.Text != (this.ComicBook.CurrentPage + 1).ToString())
+            else if (textBox.Text == string.Empty || textBox.Text != (this.ComicBook.CurrentPage + 1).ToString())
             {
                 this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
             }
+        }
+
+        private void RotateMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.ComicBook.Pages[this.ComicBook.CurrentPage] =
+                ImageTransformHelper.Rotate(
+                    this.ComicBook.Pages[this.ComicBook.CurrentPage], 90);
+            this.image.Source = this.ComicBook.Pages[this.ComicBook.CurrentPage];
+            Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
+            this.ResizeImage(sz.Width, sz.Height);
         }
     }
 }

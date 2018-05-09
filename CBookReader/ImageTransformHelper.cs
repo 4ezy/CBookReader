@@ -61,5 +61,15 @@ namespace CBookReader
             transformedBitmap.EndInit();
             return transformedBitmap;
         }
+
+        public static TransformedBitmap Rotate(BitmapSource image, double angle)
+        {
+            TransformedBitmap transformedBitmap = new TransformedBitmap();
+            transformedBitmap.BeginInit();
+            transformedBitmap.Source = image;
+            transformedBitmap.Transform = new RotateTransform(angle);
+            transformedBitmap.EndInit();
+            return transformedBitmap;
+        }
     }
 }
