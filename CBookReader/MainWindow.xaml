@@ -10,6 +10,16 @@
         SizeChanged="Window_SizeChanged" PreviewMouseWheel="Window_PreviewMouseWheel"
         PreviewKeyDown="Window_PreviewKeyDown" PreviewKeyUp="Window_PreviewKeyUp">
     <Window.Resources>
+        <Style x:Key="interfaceMenuItemStyle" TargetType="MenuItem">
+            <Setter Property="IsCheckable" Value="True"/>
+            <Setter Property="StaysOpenOnClick" Value="True"/>
+        </Style>
+        <Style x:Key="resizingMenuItemStyle" TargetType="MenuItem">
+            <Setter Property="IsCheckable" Value="True"/>
+            <Setter Property="IsChecked" Value="False"/>
+            <Setter Property="StaysOpenOnClick" Value="True"/>
+            <EventSetter Event="Click" Handler="ResizeMenuItem_Click"/>
+        </Style>
         <Style x:Key="toolbarButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32"/>
             <Setter Property="Height" Value="32"/>
@@ -99,32 +109,28 @@
                 <MenuItem Header="Поворот"/>
                 <Separator/>
                 <MenuItem x:Name="strWidthLargeMenuItem" Header="Сжать по ширине, если большое"
-                          IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"
-                          StaysOpenOnClick="True"/>
+                          Style="{StaticResource resizingMenuItemStyle}"/>
                 <MenuItem x:Name="strHeightLargeMenuItem" Header="Сжать по высоте, если большое"
-                          IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"
-                          StaysOpenOnClick="True"/>
+                          Style="{StaticResource resizingMenuItemStyle}"/>
                 <MenuItem x:Name="strWidthSmallMenuItem" Header="По ширине, если маленькое"
-                          IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"
-                          StaysOpenOnClick="True"/>
+                          Style="{StaticResource resizingMenuItemStyle}"/>
                 <MenuItem x:Name="strHeihtSmallMenuItem" Header="По высоте, если маленькое"
-                          IsCheckable="True" IsChecked="False" Click="ResizeMenuItem_Click"
-                          StaysOpenOnClick="True"/>
+                          Style="{StaticResource resizingMenuItemStyle}"/>
             </MenuItem>
             <MenuItem Header="Интерфейс">
                 <MenuItem x:Name="fullscreenMenuItem" Header="Во весь экран"
-                          Click="FullscreenMenuItem_Click" IsCheckable="True" StaysOpenOnClick="True"/>
+                          Click="FullscreenMenuItem_Click" Style="{StaticResource interfaceMenuItemStyle}"/>
                 <MenuItem x:Name="menuVisibleMenuItem" Header="Меню" IsChecked="True"
-                          Click="MenuVisibleMenuItem_Click" IsCheckable="True" StaysOpenOnClick="True"/>
+                          Click="MenuVisibleMenuItem_Click" Style="{StaticResource interfaceMenuItemStyle}"/>
                 <MenuItem x:Name="toolbarVisibleMenuItem" Header="Панель управления" IsChecked="True"
-                          Click="ToolbarVisibleMenuItem_Click" IsCheckable="True" StaysOpenOnClick="True"/>
+                          Click="ToolbarVisibleMenuItem_Click" Style="{StaticResource interfaceMenuItemStyle}"/>
                 <MenuItem x:Name="arrowsVisibleMenuItem" Header="Боковые стрелки" IsChecked="True"
-                          Click="ArrowsVisibleMenuItem_Click" IsCheckable="True" StaysOpenOnClick="True"/>
+                          Click="ArrowsVisibleMenuItem_Click" Style="{StaticResource interfaceMenuItemStyle}"/>
                 <Separator/>
                 <MenuItem x:Name="verticalScrollVisibleMenuItem" Header="Вертикальный ползунок"
-                          Click="VerticalScrollVisibleMenuItem_Click" IsCheckable="True" StaysOpenOnClick="True"/>
+                          Click="VerticalScrollVisibleMenuItem_Click" Style="{StaticResource interfaceMenuItemStyle}"/>
                 <MenuItem x:Name="horizontalScrollVisibleMenuItem" Header="Горизонтальный ползунок"
-                          Click="HorizontalScrollVisibleMenuItem_Click" IsCheckable="True" StaysOpenOnClick="True"/>
+                          Click="HorizontalScrollVisibleMenuItem_Click" Style="{StaticResource interfaceMenuItemStyle}"/>
             </MenuItem>
             <MenuItem Header="Справка">
                 <MenuItem Header="О программе"/>
@@ -162,16 +168,16 @@
             <MenuItem Header="Управление">
                 <MenuItem Header="Следующая страница" Click="NextButton_Click" 
                           IsEnabled="{Binding IsEnabled, ElementName=nextPageMenuItem}"
-                          StaysOpenOnClick="True"/>
+                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"/>
                 <MenuItem Header="Предыдущая страница" Click="BackButton_Click"
                           IsEnabled="{Binding IsEnabled, ElementName=backPageMenuItem}"
-                          StaysOpenOnClick="True"/>
+                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"/>
                 <MenuItem Header="Первая страница" Click="FirstButton_Click"
                           IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}"
-                          StaysOpenOnClick="True"/>
+                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"/>
                 <MenuItem Header="Последняя страница" Click="LastButton_Click"
                           IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}"
-                          StaysOpenOnClick="True"/>
+                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"/>
             </MenuItem>
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
@@ -240,8 +246,17 @@
                    PreviewMouseLeftButtonUp="Image_PreviewMouseLeftButtonUp"
                    PreviewMouseMove="Image_PreviewMouseMove" MouseLeave="Image_MouseLeave"/>
         </ScrollViewer>
+        <Canvas Grid.Row="2"/>
         <StackPanel x:Name="toolbarStackPanel" Grid.Row="2" Height="32"
                     Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="pageNumberTextBox" VerticalContentAlignment="Center" Margin="0, 5, 0, 5"
+                         Width="30" HorizontalContentAlignment="Center"
+                         PreviewTextInput="PageNumberTextBox_PreviewTextInput"
+                         DataObject.Pasting="OnPasting" PreviewKeyUp="PageNumberTextBox_PreviewKeyUp" GotFocus="PageNumberTextBox_GotFocus" LostFocus="PageNumberTextBox_LostFocus" HorizontalAlignment="Right"/>
+                <Label x:Name="pageCountLabel" Height="{Binding Height,ElementName=toolbarStackPanel}"
+                       VerticalContentAlignment="Center" Margin="0,0,10,0"/>
+            </StackPanel>
             <Button Style="{StaticResource toolbarButtonStyle}"
                     x:Name="firstButton" Click="FirstButton_Click"
                     IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}">

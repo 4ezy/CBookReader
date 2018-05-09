@@ -25,7 +25,6 @@ namespace CBookReader
     {
         private ComicBook ComicBook { get; set; }
         private Point GrabPoint { get; set; }
-        private Point UngrabPoint { get; set; }
         private double VertScrollOffset { get; set; }
         private double HorzScrollOffset { get; set; }
         private bool IsImageGrabbing { get; set; }
@@ -48,6 +47,8 @@ namespace CBookReader
             InitializeComponent();
             this.ComicBook = new ComicBook();
             this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grab.cur");
+            this.pageCountLabel.Content = "/0";
+            this.pageNumberTextBox.Text = "0";
             this.ComicBook.CurrentPageChanged += (() =>
             {
                 Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
@@ -235,7 +236,7 @@ namespace CBookReader
                     {
                         BitmapImage page = new BitmapImage();
                         page.BeginInit();
-                        page.CacheOption = BitmapCacheOption.OnLoad;
+                        page.CacheOption = BitmapCacheOption.OnDemand;
                         page.UriSource = new Uri(path);
                         page.EndInit();
                         this.ComicBook.Pages.Add(page);
@@ -254,6 +255,8 @@ namespace CBookReader
                     this.saveMenuItem.IsEnabled = true;
                     this.saveAllMenuItem.IsEnabled = true;
                     this.closeMenuItem.IsEnabled = true;
+                    this.pageCountLabel.Content = this.ComicBook.Pages.Count;
+                    this.pageNumberTextBox.Text = "1";
                 }
             }
         }
@@ -650,9 +653,12 @@ namespace CBookReader
                 }
             }
 
+            Point pt = Mouse.GetPosition(this.imageScroll);
+            pt.X += this.imageScroll.HorizontalOffset;
+            pt.Y += this.imageScroll.VerticalOffset;
             BitmapSource src = ImageTransformHelper.Scale(
                 this.ComicBook.Pages[this.ComicBook.CurrentPage],
-                this.scaleX, this.scaleY);
+                this.scaleX, this.scaleY, pt.X, pt.Y);
             this.image.Source = src;
             this.image.Width = Math.Floor(src.Width);
             this.image.Height = Math.Floor(src.Height);
@@ -717,6 +723,65 @@ namespace CBookReader
         {
             this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grab.cur");
             this.IsImageGrabbing = false;
+        }
+
+        private void PageNumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !e.Text.All(IsGood);
+        }
+
+        private void OnPasting(object sender, DataObjectPastingEventArgs e)
+        {
+            var stringData = (string)e.DataObject.GetData(typeof(string));
+            if (stringData == null || !stringData.All(IsGood))
+                e.CancelCommand();
+        }
+
+        bool IsGood(char c)
+        {
+            if (c >= '0' && c <= '9')
+                return true;
+            return false;
+        }
+
+        private void PageNumberTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (e.Key == Key.Enter)
+                {
+                    bool isOk = this.ComicBook.GoToPage(
+                        Convert.ToInt32(this.pageNumberTextBox.Text));
+
+                    if (isOk)
+                    {
+                        this.imageScroll.ScrollToHome();
+                        this.imageScroll.ScrollToLeftEnd();
+                    }
+                }
+            }
+            catch (Exception) { }
+        }
+
+        private void PageNumberTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            textBox.Clear();
+        }
+
+        private void PageNumberTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+
+            if (this.ComicBook.Pages.Count == 0)
+            {
+                this.pageNumberTextBox.Text = "0";
+            }
+            else if (textBox.Text == string.Empty ||
+                textBox.Text != (this.ComicBook.CurrentPage + 1).ToString())
+            {
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
         }
     }
 }

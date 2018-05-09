@@ -145,5 +145,19 @@ namespace CBookReader
 
             return isOperationExecuted;
         }
+
+        public bool GoToPage(int number)
+        {
+            bool isOperationExecuted = false;
+
+            if (this.Pages.Count != 0 && number > 0 &&
+                number <= this.Pages.Count)
+            {
+                this.CurrentPage = number - 1;
+                isOperationExecuted = true;
+            }
+
+            return isOperationExecuted;
+        }
     }
 }

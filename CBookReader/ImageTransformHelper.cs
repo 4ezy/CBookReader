@@ -39,12 +39,25 @@ namespace CBookReader
             return ImageTransformHelper.Scale(image, scaleX, scaleY);
         }
 
-        public static TransformedBitmap Scale(BitmapSource image, double scaleX, double scaleY)
+        public static TransformedBitmap Scale(BitmapSource image,
+            double scaleX, double scaleY)
         {
             TransformedBitmap transformedBitmap = new TransformedBitmap();
             transformedBitmap.BeginInit();
             transformedBitmap.Source = image;
             transformedBitmap.Transform = new ScaleTransform(scaleX, scaleY);
+            transformedBitmap.EndInit();
+            return transformedBitmap;
+        }
+
+        public static TransformedBitmap Scale(BitmapSource image,
+            double scaleX, double scaleY, double centerX, double centerY)
+        {
+            TransformedBitmap transformedBitmap = new TransformedBitmap();
+            transformedBitmap.BeginInit();
+            transformedBitmap.Source = image;
+            transformedBitmap.Transform = new ScaleTransform(
+                scaleX, scaleY, centerX, centerY);
             transformedBitmap.EndInit();
             return transformedBitmap;
         }
