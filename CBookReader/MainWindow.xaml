@@ -6,9 +6,45 @@
         xmlns:local="clr-namespace:CBookReader"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen" WindowState="Normal"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
         SizeChanged="Window_SizeChanged" PreviewMouseWheel="Window_PreviewMouseWheel"
         PreviewKeyDown="Window_PreviewKeyDown" PreviewKeyUp="Window_PreviewKeyUp">
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Open"
+                        CanExecute="OpenCmdCanExecute"
+                        Executed="OpenCmdExecuted"/>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        CanExecute="SaveCmdCanExecute"
+                        Executed="SaveCmdExecuted"/>
+        <CommandBinding Command="ApplicationCommands.Close"
+                        CanExecute="CloseCmdCanExecute"
+                        Executed="CloseCmdExecuted"/>
+        <CommandBinding Command="NavigationCommands.NextPage"
+                        CanExecute="NextPageCmdCanExecute"
+                        Executed="NextPageCmdExecuted"/>
+        <CommandBinding Command="NavigationCommands.PreviousPage"
+                        CanExecute="PreviousPageCmdCanExecute"
+                        Executed="PreviousPageCmdExecuted"/>
+        <CommandBinding Command="NavigationCommands.FirstPage"
+                        CanExecute="FirstPageCmdCanExecute"
+                        Executed="FirstPageCmdExecuted"/>
+        <CommandBinding Command="NavigationCommands.LastPage"
+                        CanExecute="LastPageCmdCanExecute"
+                        Executed="LastPageCmdExecuted"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="W"
+                    Modifiers="Ctrl"
+                    Command="ApplicationCommands.Close"/>
+        <KeyBinding Key="PageDown"
+                    Command="NavigationCommands.NextPage"/>
+        <KeyBinding Key="PageUp"
+                    Command="NavigationCommands.PreviousPage"/>
+        <KeyBinding Key="End"
+                    Command="NavigationCommands.LastPage"/>
+        <KeyBinding Key="Home"
+                    Command="NavigationCommands.FirstPage"/>
+    </Window.InputBindings>
     <Window.Resources>
         <Style x:Key="interfaceMenuItemStyle" TargetType="MenuItem">
             <Setter Property="IsCheckable" Value="True"/>
@@ -73,10 +109,12 @@
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Файл">
-                <MenuItem x:Name="openMenuItem" Header="Открыть..." Click="OpenMenuItem_Click"/>
+                <MenuItem Header="Открыть..." Command="ApplicationCommands.Open"
+                          CommandTarget="{Binding Path=PlacementTarget,RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                 <Separator/>
                 <MenuItem x:Name="saveMenuItem" IsEnabled="False"
-                          Header="Сохранить..." Click="SaveMenuItem_Click"/>
+                          Header="Сохранить..." Command="ApplicationCommands.Save"
+                          CommandTarget="{Binding Path=PlacementTarget,RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
                 <MenuItem x:Name="saveAllMenuItem" IsEnabled="False"
                           Header="Сохранить все...">
                     <MenuItem x:Name="allAsJpegMenuItem" Header="В формате JPEG" Click="AllAsJpegMenuItem_Click"/>
@@ -86,7 +124,7 @@
                     <MenuItem x:Name="allAsTiffMenuItem" Header="В формате TIFF" Click="AllAsTiffMenuItem_Click"/>
                 </MenuItem>
                 <Separator/>
-                <MenuItem x:Name="closeMenuItem" IsEnabled="False" Header="Закрыть" Click="CloseMenuItem_Click"/>
+                <MenuItem x:Name="closeMenuItem" IsEnabled="False" Header="Закрыть" Command="ApplicationCommands.Close"/>
                 <Separator/>
                 <MenuItem x:Name="maximizeMenuItem" Header="Развернуть" Click="MaximizeMenuItem_Click"/>
                 <MenuItem x:Name="minimizeMenuItem" Header="Свернуть" Click="MinimizeMenuItem_Click"/>
@@ -94,23 +132,22 @@
             </MenuItem>
             <MenuItem Header="Управление">
                 <MenuItem x:Name="nextPageMenuItem" Header="Следующая страница"
-                          Click="NextButton_Click" IsEnabled="False" StaysOpenOnClick="True"/>
+                          IsEnabled="False" StaysOpenOnClick="True" Click="NextPageMenuItem_Click"/>
                 <MenuItem x:Name="backPageMenuItem" Header="Предыдущая страница"
-                          Click="BackButton_Click" IsEnabled="False" StaysOpenOnClick="True"/>
+                          IsEnabled="False" StaysOpenOnClick="True" Click="BackPageMenuItem_Click"/>
                 <MenuItem x:Name="firstPageMenuItem" Header="Первая страница"
-                          Click="FirstButton_Click" IsEnabled="False" StaysOpenOnClick="True"/>
+                          IsEnabled="False" StaysOpenOnClick="True" Click="FirstPageMenuItem_Click"/>
                 <MenuItem x:Name="lastPageMenuItem" Header="Последняя страница"
-                          Click="LastButton_Click" IsEnabled="False" StaysOpenOnClick="True"/>
+                          IsEnabled="False" StaysOpenOnClick="True" Click="LastPageMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
                 <MenuItem Header="Контраст"/>
-                <MenuItem Header="Поворот" Click="RotateMenuItem_Click"
-                          StaysOpenOnClick="True"/>
+                <MenuItem Header="Поворот" Click="RotateMenuItem_Click" StaysOpenOnClick="True"/>
                 <Separator/>
-                <MenuItem x:Name="strWidthLargeMenuItem" Header="Сжать по ширине, если большое"
+                <MenuItem x:Name="strWidthLargeMenuItem" Header="По ширине, если большое"
                           Style="{StaticResource resizingMenuItemStyle}"/>
-                <MenuItem x:Name="strHeightLargeMenuItem" Header="Сжать по высоте, если большое"
+                <MenuItem x:Name="strHeightLargeMenuItem" Header="По высоте, если большое"
                           Style="{StaticResource resizingMenuItemStyle}"/>
                 <MenuItem x:Name="strWidthSmallMenuItem" Header="По ширине, если маленькое"
                           Style="{StaticResource resizingMenuItemStyle}"/>
@@ -145,9 +182,9 @@
         </Grid.RowDefinitions>
         <Menu x:Name="menu" Grid.Row="0" Height="19">
             <MenuItem Header="Файл">
-                <MenuItem Header="Открыть..." Click="OpenMenuItem_Click"/>
+                <MenuItem Header="Открыть..." Command="ApplicationCommands.Open"/>
                 <Separator/>
-                <MenuItem Header="Сохранить..." Click="SaveMenuItem_Click" 
+                <MenuItem Header="Сохранить..." Command="ApplicationCommands.Save"
                           IsEnabled="{Binding IsEnabled, ElementName=saveMenuItem}"/>
                 <MenuItem Header="Сохранить все..."
                           IsEnabled="{Binding IsEnabled, ElementName=saveAllMenuItem}">
@@ -158,26 +195,31 @@
                     <MenuItem Header="В формате TIFF" Click="AllAsTiffMenuItem_Click"/>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Header="Закрыть" Click="CloseMenuItem_Click"
-                          IsEnabled="{Binding IsEnabled, ElementName=closeMenuItem}"/>
+                <MenuItem Header="Закрыть" InputGestureText="Ctrl+W"
+                          IsEnabled="{Binding IsEnabled, ElementName=closeMenuItem}"
+                          Command="ApplicationCommands.Close"/>
                 <Separator/>
                 <MenuItem Header="Развернуть" Click="MaximizeMenuItem_Click"/>
                 <MenuItem Header="Свернуть" Click="MinimizeMenuItem_Click"/>
                 <MenuItem Header="Выход" Click="ExitMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="Управление">
-                <MenuItem Header="Следующая страница" Click="NextButton_Click" 
+                <MenuItem Header="Следующая страница"
                           IsEnabled="{Binding IsEnabled, ElementName=nextPageMenuItem}"
-                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"/>
-                <MenuItem Header="Предыдущая страница" Click="BackButton_Click"
+                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"
+                          Command="NavigationCommands.NextPage"/>
+                <MenuItem Header="Предыдущая страница"
                           IsEnabled="{Binding IsEnabled, ElementName=backPageMenuItem}"
-                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"/>
-                <MenuItem Header="Первая страница" Click="FirstButton_Click"
+                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"
+                          Command="NavigationCommands.PreviousPage"/>
+                <MenuItem Header="Первая страница"
                           IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}"
-                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"/>
-                <MenuItem Header="Последняя страница" Click="LastButton_Click"
+                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"
+                          Command="NavigationCommands.FirstPage"/>
+                <MenuItem Header="Последняя страница"
                           IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}"
-                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"/>
+                          StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"
+                          Command="NavigationCommands.LastPage"/>
             </MenuItem>
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
@@ -185,10 +227,10 @@
                 <MenuItem x:Name="rotateMenuItem" Header="Поворот"
                           Click="RotateMenuItem_Click" StaysOpenOnClick="True"/>
                 <Separator/>
-                <MenuItem Header="Сжать по ширине, если большое" IsCheckable="True"
+                <MenuItem Header="По ширине, если большое" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strWidthLargeMenuItem}"
                           Click="ResizeMenuItem_Click" StaysOpenOnClick="True"/>
-                <MenuItem Header="Сжать по высоте, если большое" IsCheckable="True"
+                <MenuItem Header="По высоте, если большое" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strHeightLargeMenuItem}"
                           Click="ResizeMenuItem_Click" StaysOpenOnClick="True"/>
                 <MenuItem Header="По ширине, если маленькое" IsCheckable="True"
@@ -260,26 +302,30 @@
                        VerticalContentAlignment="Center" Margin="0,0,10,0" HorizontalAlignment="Right"/>
             </StackPanel>
             <Button Style="{StaticResource toolbarButtonStyle}"
-                    x:Name="firstButton" Click="FirstButton_Click"
-                    IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}">
+                    x:Name="firstButton"
+                    IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}"
+                    Command="NavigationCommands.FirstPage">
                 <StackPanel Orientation="Horizontal">
                     <Line Style="{StaticResource basicLineIconStyle}"/>
                     <Polygon Style="{StaticResource basicTriangleIconStyle}"/>
                 </StackPanel>
             </Button>
             <Button Style="{StaticResource toolbarButtonStyle}"
-                    x:Name="backButton" Click="BackButton_Click"
-                    IsEnabled="{Binding IsEnabled, ElementName=backPageMenuItem}">
+                    x:Name="backButton"
+                    IsEnabled="{Binding IsEnabled, ElementName=backPageMenuItem}"
+                    Command="NavigationCommands.PreviousPage">
                 <Polygon Style="{StaticResource basicTriangleIconStyle}"/>
             </Button>
             <Button Style="{StaticResource toolbarButtonStyle}"
-                    x:Name="nextButton" Click="NextButton_Click"
-                    IsEnabled="{Binding IsEnabled, ElementName=nextPageMenuItem}">
+                    x:Name="nextButton"
+                    IsEnabled="{Binding IsEnabled, ElementName=nextPageMenuItem}"
+                    Command="NavigationCommands.NextPage">
                 <Polygon Style="{StaticResource basicTriangleIconStyle}" FlowDirection="RightToLeft"/>
             </Button>
             <Button Style="{StaticResource toolbarButtonStyle}"
-                    x:Name="lastButton" Click="LastButton_Click"
-                    IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}">
+                    x:Name="lastButton"
+                    IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}"
+                    Command="NavigationCommands.LastPage">
                 <StackPanel Orientation="Horizontal">
                     <Polygon Style="{StaticResource basicTriangleIconStyle}" FlowDirection="RightToLeft"/>
                     <Line Style="{StaticResource basicLineIconStyle}"/>

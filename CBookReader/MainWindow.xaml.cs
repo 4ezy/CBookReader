@@ -52,7 +52,7 @@ namespace CBookReader
             this.ComicBook.CurrentPageChanged += (() =>
             {
                 Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
-                this.IsScaled = false;
+                //this.IsScaled = false;
                 this.ResizeImage(sz.Width, sz.Height);
 
                 if (this.ComicBook.CurrentPage == 0)
@@ -135,54 +135,6 @@ namespace CBookReader
             };
         }
 
-        private void FirstButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool isOk = this.ComicBook.FirstPage();
-
-            if (isOk)
-            {
-                this.imageScroll.ScrollToHome();
-                this.imageScroll.ScrollToLeftEnd();
-                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
-            }
-        }
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool isOk = this.ComicBook.BackPage();
-
-            if (isOk)
-            {
-                this.imageScroll.ScrollToEnd();
-                this.imageScroll.ScrollToRightEnd();
-                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
-            }
-        }
-
-        private void NextButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool isOk = this.ComicBook.NextPage();
-
-            if (isOk)
-            {
-                this.imageScroll.ScrollToHome();
-                this.imageScroll.ScrollToLeftEnd();
-                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
-            }
-        }
-
-        private void LastButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool isOk = this.ComicBook.LastPage();
-
-            if (isOk)
-            {
-                this.imageScroll.ScrollToHome();
-                this.imageScroll.ScrollToLeftEnd();
-                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
-            }
-        }
-
         private void BackRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             bool isOk = this.ComicBook.BackPage();
@@ -205,7 +157,12 @@ namespace CBookReader
             }
         }
 
-        private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
+        private void OpenCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void OpenCmdExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog
             {
@@ -265,7 +222,15 @@ namespace CBookReader
             }
         }
 
-        private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
+        private void SaveCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (saveMenuItem.IsEnabled)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
+        }
+
+        private void SaveCmdExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {
@@ -379,18 +344,6 @@ namespace CBookReader
                         encoder.Save(fs);
                 }
             }
-        }
-
-        private void CloseMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            this.saveMenuItem.IsEnabled = false;
-            this.saveAllMenuItem.IsEnabled = false;
-            this.closeMenuItem.IsEnabled = false;
-            this.ComicBook.Pages.Clear();
-            this.ComicBook.CurrentPage = -1;
-            this.image.Source = null;
-            this.pageNumberTextBox.Text = "0";
-            this.pageCountLabel.Content = "/0";
         }
 
         private void FullscreenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -576,12 +529,12 @@ namespace CBookReader
                     IsScaled = false;
                 }
 
-                if (!isSizeChanged && this.image.Source != page && !IsScaled)
+                if (!isSizeChanged && this.image.Source != page)
                 {
                     BitmapSource src = ImageTransformHelper.Stretch(
-                        page, page.PixelWidth, page.PixelHeight, out scaleX, out scaleY);
+                        page, page.PixelWidth, page.PixelHeight, out double scX, out double scY);
+                    src = ImageTransformHelper.Scale(src, scaleX, scaleY);
                     this.image.Source = src;
-
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
                 }
@@ -797,6 +750,154 @@ namespace CBookReader
             this.image.Source = this.ComicBook.Pages[this.ComicBook.CurrentPage];
             Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
             this.ResizeImage(sz.Width, sz.Height);
+        }
+
+        private void CloseCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.closeMenuItem.IsEnabled)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
+        }
+
+        private void CloseCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.saveMenuItem.IsEnabled = false;
+            this.saveAllMenuItem.IsEnabled = false;
+            this.closeMenuItem.IsEnabled = false;
+            this.ComicBook.Pages.Clear();
+            this.ComicBook.CurrentPage = -1;
+            this.image.Source = null;
+            this.pageNumberTextBox.Text = "0";
+            this.pageCountLabel.Content = "/0";
+        }
+
+        private void NextPageCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.nextPageMenuItem.IsEnabled)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
+        }
+
+        private void NextPageCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.NextPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
+        }
+
+        private void PreviousPageCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.backPageMenuItem.IsEnabled)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
+        }
+
+        private void PreviousPageCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.BackPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToEnd();
+                this.imageScroll.ScrollToRightEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
+        }
+
+        private void FirstPageCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.firstPageMenuItem.IsEnabled)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
+        }
+
+        private void FirstPageCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.FirstPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
+        }
+
+        private void LastPageCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.lastPageMenuItem.IsEnabled)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
+        }
+
+        private void LastPageCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.LastPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
+        }
+
+        private void NextPageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.NextPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
+        }
+
+        private void BackPageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.BackPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToEnd();
+                this.imageScroll.ScrollToRightEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
+        }
+
+        private void FirstPageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.FirstPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
+        }
+
+        private void LastPageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            bool isOk = this.ComicBook.LastPage();
+
+            if (isOk)
+            {
+                this.imageScroll.ScrollToHome();
+                this.imageScroll.ScrollToLeftEnd();
+                this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
+            }
         }
     }
 }
