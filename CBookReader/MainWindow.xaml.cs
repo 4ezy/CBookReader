@@ -32,6 +32,7 @@ namespace CBookReader
         private double scaleX;
         private double scaleY;
         private static readonly double scaleStep = 0.05;
+        private bool numberTextBoxFocusedForSearch = false;
 
         enum ImageFormat
         {
@@ -533,7 +534,10 @@ namespace CBookReader
                 {
                     BitmapSource src = ImageTransformHelper.Stretch(
                         page, page.PixelWidth, page.PixelHeight, out double scX, out double scY);
-                    src = ImageTransformHelper.Scale(src, scaleX, scaleY);
+
+                    if (IsScaled)
+                        src = ImageTransformHelper.Scale(src, scaleX, scaleY);
+
                     this.image.Source = src;
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
@@ -740,16 +744,28 @@ namespace CBookReader
             {
                 this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
             }
+
+            if (numberTextBoxFocusedForSearch)
+            {
+                this.toolbarStackPanel.Visibility = Visibility.Collapsed;
+                numberTextBoxFocusedForSearch = false;
+            }
         }
 
         private void RotateMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.ComicBook.Pages[this.ComicBook.CurrentPage] =
+            if (this.image.Source != null)
+            {
+                this.ComicBook.Pages[this.ComicBook.CurrentPage] =
                 ImageTransformHelper.Rotate(
                     this.ComicBook.Pages[this.ComicBook.CurrentPage], 90);
-            this.image.Source = this.ComicBook.Pages[this.ComicBook.CurrentPage];
-            Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
-            this.ResizeImage(sz.Width, sz.Height);
+                BitmapSource src = ImageTransformHelper.Scale(
+                    this.ComicBook.Pages[this.ComicBook.CurrentPage],
+                    scaleX, scaleY);
+                this.image.Source = src;
+                Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
+                this.ResizeImage(sz.Width, sz.Height);
+            }
         }
 
         private void CloseCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -898,6 +914,80 @@ namespace CBookReader
                 this.imageScroll.ScrollToLeftEnd();
                 this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
             }
+        }
+
+        private void RotateCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.rotateMenuItem.IsEnabled)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
+        }
+
+        private void RotateCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.RotateMenuItem_Click(null, null);
+        }
+
+        private void GoToPageCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void GoToPageCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (this.toolbarStackPanel.Visibility != Visibility.Visible)
+            {
+                this.toolbarStackPanel.Visibility = Visibility.Visible;
+                this.pageNumberTextBox.Focus();
+                numberTextBoxFocusedForSearch = true;
+            }
+            else
+                this.pageNumberTextBox.Focus();
+        }
+
+        private void ScrollPageDownCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ScrollPageDownExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.imageScroll.ScrollToVerticalOffset(
+                this.imageScroll.VerticalOffset + this.image.Height / 4);
+        }
+
+        private void ScrollPageUpCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ScrollPageUpExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.imageScroll.ScrollToVerticalOffset(
+                this.imageScroll.VerticalOffset - this.image.Height / 4);
+        }
+
+        private void ScrollPageLeftCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ScrollPageLeftExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.imageScroll.ScrollToHorizontalOffset(
+                this.imageScroll.HorizontalOffset - this.image.Width / 4);
+        }
+
+        private void ScrollPageRightCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ScrollPageRightExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.imageScroll.ScrollToHorizontalOffset(
+                this.imageScroll.HorizontalOffset + this.image.Width / 4);
         }
     }
 }

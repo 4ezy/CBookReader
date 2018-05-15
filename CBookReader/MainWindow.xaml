@@ -31,6 +31,24 @@
         <CommandBinding Command="NavigationCommands.LastPage"
                         CanExecute="LastPageCmdCanExecute"
                         Executed="LastPageCmdExecuted"/>
+        <CommandBinding Command="NavigationCommands.Refresh"
+                        CanExecute="RotateCmdCanExecute"
+                        Executed="RotateCmdExecuted"/>
+        <CommandBinding Command="NavigationCommands.GoToPage"
+                        CanExecute="GoToPageCmdCanExecute"
+                        Executed="GoToPageCmdExecuted"/>
+        <CommandBinding Command="ComponentCommands.ScrollPageDown"
+                        CanExecute="ScrollPageDownCmdCanExecute"
+                        Executed="ScrollPageDownExecuted"/>
+        <CommandBinding Command="ComponentCommands.ScrollPageUp"
+                        CanExecute="ScrollPageUpCmdCanExecute"
+                        Executed="ScrollPageUpExecuted"/>
+        <CommandBinding Command="ComponentCommands.ScrollPageLeft"
+                        CanExecute="ScrollPageLeftCmdCanExecute"
+                        Executed="ScrollPageLeftExecuted"/>
+        <CommandBinding Command="ComponentCommands.ScrollPageRight"
+                        CanExecute="ScrollPageRightCmdCanExecute"
+                        Executed="ScrollPageRightExecuted"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="W"
@@ -44,6 +62,20 @@
                     Command="NavigationCommands.LastPage"/>
         <KeyBinding Key="Home"
                     Command="NavigationCommands.FirstPage"/>
+        <KeyBinding Key="R"
+                    Modifiers="Ctrl"
+                    Command="NavigationCommands.Refresh"/>
+        <KeyBinding Key="F"
+                    Modifiers="Ctrl"
+                    Command="NavigationCommands.GoToPage"/>
+        <KeyBinding Key="Down"
+                    Command="ComponentCommands.ScrollPageDown"/>
+        <KeyBinding Key="Up"
+                    Command="ComponentCommands.ScrollPageUp"/>
+        <KeyBinding Key="Left"
+                    Command="ComponentCommands.ScrollPageLeft"/>
+        <KeyBinding Key="Right"
+                    Command="ComponentCommands.ScrollPageRight"/>
     </Window.InputBindings>
     <Window.Resources>
         <Style x:Key="interfaceMenuItemStyle" TargetType="MenuItem">
@@ -124,7 +156,8 @@
                     <MenuItem x:Name="allAsTiffMenuItem" Header="В формате TIFF" Click="AllAsTiffMenuItem_Click"/>
                 </MenuItem>
                 <Separator/>
-                <MenuItem x:Name="closeMenuItem" IsEnabled="False" Header="Закрыть" Command="ApplicationCommands.Close"/>
+                <MenuItem x:Name="closeMenuItem" IsEnabled="False" Header="Закрыть"
+                          Command="ApplicationCommands.Close" InputGestureText="Ctrl+W"/>
                 <Separator/>
                 <MenuItem x:Name="maximizeMenuItem" Header="Развернуть" Click="MaximizeMenuItem_Click"/>
                 <MenuItem x:Name="minimizeMenuItem" Header="Свернуть" Click="MinimizeMenuItem_Click"/>
@@ -132,18 +165,24 @@
             </MenuItem>
             <MenuItem Header="Управление">
                 <MenuItem x:Name="nextPageMenuItem" Header="Следующая страница"
-                          IsEnabled="False" StaysOpenOnClick="True" Click="NextPageMenuItem_Click"/>
+                          IsEnabled="False" StaysOpenOnClick="True"
+                          Click="NextPageMenuItem_Click" InputGestureText="PageDown"/>
                 <MenuItem x:Name="backPageMenuItem" Header="Предыдущая страница"
-                          IsEnabled="False" StaysOpenOnClick="True" Click="BackPageMenuItem_Click"/>
+                          IsEnabled="False" StaysOpenOnClick="True"
+                          Click="BackPageMenuItem_Click" InputGestureText="PageUp"/>
                 <MenuItem x:Name="firstPageMenuItem" Header="Первая страница"
-                          IsEnabled="False" StaysOpenOnClick="True" Click="FirstPageMenuItem_Click"/>
+                          IsEnabled="False" StaysOpenOnClick="True"
+                          Click="FirstPageMenuItem_Click" InputGestureText="Home"/>
                 <MenuItem x:Name="lastPageMenuItem" Header="Последняя страница"
-                          IsEnabled="False" StaysOpenOnClick="True" Click="LastPageMenuItem_Click"/>
+                          IsEnabled="False" StaysOpenOnClick="True"
+                          Click="LastPageMenuItem_Click" InputGestureText="End"/>
             </MenuItem>
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
                 <MenuItem Header="Контраст"/>
-                <MenuItem Header="Поворот" Click="RotateMenuItem_Click" StaysOpenOnClick="True"/>
+                <MenuItem Header="Поворот" Click="RotateMenuItem_Click"
+                          StaysOpenOnClick="True" 
+                          InputGestureText="{Binding InputGestureText,ElementName=rotateMenuItem}"/>
                 <Separator/>
                 <MenuItem x:Name="strWidthLargeMenuItem" Header="По ширине, если большое"
                           Style="{StaticResource resizingMenuItemStyle}"/>
@@ -207,25 +246,30 @@
                 <MenuItem Header="Следующая страница"
                           IsEnabled="{Binding IsEnabled, ElementName=nextPageMenuItem}"
                           StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"
-                          Command="NavigationCommands.NextPage"/>
+                          Command="NavigationCommands.NextPage" 
+                          InputGestureText="{Binding InputGestureText,ElementName=nextPageMenuItem}"/>
                 <MenuItem Header="Предыдущая страница"
                           IsEnabled="{Binding IsEnabled, ElementName=backPageMenuItem}"
                           StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"
-                          Command="NavigationCommands.PreviousPage"/>
+                          Command="NavigationCommands.PreviousPage"
+                          InputGestureText="{Binding InputGestureText,ElementName=backPageMenuItem}"/>
                 <MenuItem Header="Первая страница"
                           IsEnabled="{Binding IsEnabled, ElementName=firstPageMenuItem}"
                           StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"
-                          Command="NavigationCommands.FirstPage"/>
+                          Command="NavigationCommands.FirstPage"
+                          InputGestureText="{Binding InputGestureText,ElementName=firstPageMenuItem}"/>
                 <MenuItem Header="Последняя страница"
                           IsEnabled="{Binding IsEnabled, ElementName=lastPageMenuItem}"
                           StaysOpenOnClick="{Binding StaysOpenOnClick, ElementName=nextPageMenuItem}"
-                          Command="NavigationCommands.LastPage"/>
+                          Command="NavigationCommands.LastPage"
+                          InputGestureText="{Binding InputGestureText,ElementName=lastPageMenuItem}"/>
             </MenuItem>
             <MenuItem Header="Изображение">
                 <MenuItem Header="Яркость"/>
                 <MenuItem Header="Контраст"/>
                 <MenuItem x:Name="rotateMenuItem" Header="Поворот"
-                          Click="RotateMenuItem_Click" StaysOpenOnClick="True"/>
+                          Click="RotateMenuItem_Click" StaysOpenOnClick="True"
+                          InputGestureText="Ctrl+R"/>
                 <Separator/>
                 <MenuItem Header="По ширине, если большое" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strWidthLargeMenuItem}"
