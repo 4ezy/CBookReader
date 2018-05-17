@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace CBookReader
 {
-    internal static class ImageTransformHelper
+    static class ImageTransformHelper
     {
         public static TransformedBitmap StretchToWidth(BitmapSource image,
             double width, out double scaleX, out double scaleY)

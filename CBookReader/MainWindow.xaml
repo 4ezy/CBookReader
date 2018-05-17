@@ -8,7 +8,8 @@
         Title="MainWindow" Height="450" Width="800"
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
         SizeChanged="Window_SizeChanged" PreviewMouseWheel="Window_PreviewMouseWheel"
-        PreviewKeyDown="Window_PreviewKeyDown" PreviewKeyUp="Window_PreviewKeyUp">
+        PreviewKeyDown="Window_PreviewKeyDown" PreviewKeyUp="Window_PreviewKeyUp"
+        x:Name="mainWindow">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open"
                         CanExecute="OpenCmdCanExecute"
@@ -331,7 +332,13 @@
             <Image x:Name="image" Stretch="None"
                    PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown"
                    PreviewMouseLeftButtonUp="Image_PreviewMouseLeftButtonUp"
-                   PreviewMouseMove="Image_PreviewMouseMove" MouseLeave="Image_MouseLeave"/>
+                   PreviewMouseMove="Image_PreviewMouseMove" MouseLeave="Image_MouseLeave">
+                <Image.Effect>
+                    <local:BrightContrastEffect
+                        Brightness="{Binding ElementName=mainWindow, Path=Brightness}"
+                        Contrast="{Binding ElementName=mainWindow, Path=Contrast}"/>
+                </Image.Effect>
+            </Image>
         </ScrollViewer>
         <Canvas Grid.Row="2"/>
         <StackPanel x:Name="toolbarStackPanel" Grid.Row="2" Height="32"

@@ -34,6 +34,24 @@ namespace CBookReader
         private static readonly double scaleStep = 0.05;
         private bool numberTextBoxFocusedForSearch = false;
 
+        public static readonly DependencyProperty BrightnessProperty =
+            DependencyProperty.Register("Brightness", typeof(double),
+                typeof(MainWindow), new UIPropertyMetadata(0d));
+
+        public static readonly DependencyProperty ContrastProperty =
+            DependencyProperty.Register("Contrast", typeof(double),
+                typeof(MainWindow), new UIPropertyMetadata(0d));
+
+        public double Brightness {
+            get { return (double)this.GetValue(BrightnessProperty); }
+            set { this.SetValue(BrightnessProperty, value); }
+        }
+        public double Contrast
+        {
+            get { return (double)this.GetValue(ContrastProperty); }
+            set { this.SetValue(ContrastProperty, value); }
+        }
+
         enum ImageFormat
         {
             JPEG,
@@ -50,10 +68,10 @@ namespace CBookReader
             this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grab.cur");
             this.pageCountLabel.Content = "/0";
             this.pageNumberTextBox.Text = "0";
+
             this.ComicBook.CurrentPageChanged += (() =>
             {
                 Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
-                //this.IsScaled = false;
                 this.ResizeImage(sz.Width, sz.Height);
 
                 if (this.ComicBook.CurrentPage == 0)
@@ -995,7 +1013,18 @@ namespace CBookReader
 
         private void ImageProcessingMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Window imageProcWindow = new ImageProcessingWindow(this.image);
+            ImageProcessingWindow imageProcWindow = new ImageProcessingWindow();
+
+            imageProcWindow.BrightnessChanged += ((b) =>
+            {
+                this.Brightness = b;
+            });
+
+            imageProcWindow.ContrastChanged += ((c) =>
+            {
+                this.Contrast = c;
+            });
+
             imageProcWindow.Show();
         }
     }

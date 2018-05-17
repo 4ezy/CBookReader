@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -19,24 +20,24 @@ namespace CBookReader
     /// </summary>
     public partial class ImageProcessingWindow : Window
     {
-        public Image ParentImage { get; set; }
+        public event Action<double> BrightnessChanged;
+        public event Action<double> ContrastChanged;
 
-        public ImageProcessingWindow(Image parentImage)
+        public ImageProcessingWindow()
         {
             InitializeComponent();
-            this.ParentImage = parentImage;
         }
 
-        private void BrightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void ContrastSlider_ValueChanged(
+            object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            BitmapSource source = this.ParentImage.Source as BitmapSource;
-            // изменять яркость
+            this.ContrastChanged(e.NewValue);
         }
 
-        private void ContrastSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void BrightnessSlider_ValueChanged(
+            object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            BitmapSource source = this.ParentImage.Source as BitmapSource;
-            ImageProcessingHelper.ChangeContrast(source, e.NewValue);
+            this.BrightnessChanged(e.NewValue);
         }
     }
 }

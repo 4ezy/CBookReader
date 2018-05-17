@@ -10,7 +10,7 @@ using SharpCompress.Archives.Rar;
 
 namespace CBookReader
 {
-    internal sealed class ComicBook
+    sealed class ComicBook
     {
         public List<BitmapSource> Pages { get; set; }
         public static List<string> AviableArchiveFormats { get; } = new List<string>
