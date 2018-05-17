@@ -59,6 +59,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ImageProcessingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -68,6 +72,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ComicBook.cs" />
+    <Compile Include="ImageProcessingHelper.cs" />
+    <Compile Include="ImageProcessingWindow.xaml.cs">
+      <DependentUpon>ImageProcessingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageTransformHelper.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

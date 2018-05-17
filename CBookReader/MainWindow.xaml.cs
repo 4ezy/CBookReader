@@ -500,10 +500,8 @@ namespace CBookReader
                 if (this.image.Source == null)
                     return;
 
-                BitmapSource page = this.ComicBook.Pages[this.ComicBook.CurrentPage];
-                BitmapSource source = this.image.Source as BitmapSource;
                 bool isSizeChanged = false;
-
+                BitmapSource page = this.ComicBook.Pages[this.ComicBook.CurrentPage];
                 Size imageControlSize = this.GetImageControlSize(windowWidth, windowHeight);
 
                 if ((this.strWidthLargeMenuItem.IsChecked && page.PixelWidth > imageControlSize.Width) ||
@@ -757,11 +755,16 @@ namespace CBookReader
             if (this.image.Source != null)
             {
                 this.ComicBook.Pages[this.ComicBook.CurrentPage] =
-                ImageTransformHelper.Rotate(
-                    this.ComicBook.Pages[this.ComicBook.CurrentPage], 90);
-                BitmapSource src = ImageTransformHelper.Scale(
-                    this.ComicBook.Pages[this.ComicBook.CurrentPage],
-                    scaleX, scaleY);
+                    ImageTransformHelper.Rotate(
+                        this.ComicBook.Pages[this.ComicBook.CurrentPage], 90);
+
+                BitmapSource src = this.ComicBook.Pages[this.ComicBook.CurrentPage];
+                src = ImageTransformHelper.Stretch(
+                        src, src.PixelWidth, src.PixelHeight, out double scX, out double scY);
+
+                if (IsScaled)
+                    src = ImageTransformHelper.Scale(src, scaleX, scaleY);
+
                 this.image.Source = src;
                 Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
                 this.ResizeImage(sz.Width, sz.Height);
@@ -988,6 +991,12 @@ namespace CBookReader
         {
             this.imageScroll.ScrollToHorizontalOffset(
                 this.imageScroll.HorizontalOffset + this.image.Width / 4);
+        }
+
+        private void ImageProcessingMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Window imageProcWindow = new ImageProcessingWindow(this.image);
+            imageProcWindow.Show();
         }
     }
 }

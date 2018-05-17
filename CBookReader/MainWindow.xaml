@@ -265,8 +265,9 @@
                           InputGestureText="{Binding InputGestureText,ElementName=lastPageMenuItem}"/>
             </MenuItem>
             <MenuItem Header="Изображение">
-                <MenuItem Header="Яркость"/>
-                <MenuItem Header="Контраст"/>
+                <MenuItem x:Name="imageProcessingMenuItem" Header="Обработка"
+                          Click="ImageProcessingMenuItem_Click"/>
+                <Separator/>
                 <MenuItem x:Name="rotateMenuItem" Header="Поворот"
                           Click="RotateMenuItem_Click" StaysOpenOnClick="True"
                           InputGestureText="Ctrl+R"/>
