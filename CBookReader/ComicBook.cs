@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using SharpCompress.Readers;
 using SharpCompress.Archives.Rar;
+using System.Windows.Controls;
 
 namespace CBookReader
 {
@@ -43,6 +44,8 @@ namespace CBookReader
 
         public event Action CurrentPageChanged;
         private int currentPage;
+        public event Action<int> EntriesCountChanged;
+        public event Action<int> CurrentEntryChanged;
 
         public int CurrentPage
         {
@@ -67,9 +70,24 @@ namespace CBookReader
 
         public void UnpackAllPages(string path)
         {
+            int entriesCount = 0;
+
             using (Stream stream = File.OpenRead(path))
             using (var reader = ReaderFactory.Open(stream))
             {
+                while (reader.MoveToNextEntry())
+                {
+                    entriesCount++;
+                }
+            }
+
+            EntriesCountChanged(entriesCount);
+
+            using (Stream stream = File.OpenRead(path))
+            using (var reader = ReaderFactory.Open(stream))
+            {
+                int i = 0;
+
                 while (reader.MoveToNextEntry())
                 {
                     if (!reader.Entry.IsDirectory)
@@ -88,12 +106,27 @@ namespace CBookReader
                                 page.StreamSource = ms;
                                 page.CacheOption = BitmapCacheOption.OnLoad;
                                 page.EndInit();
+                                page.Freeze();
                                 this.Pages.Add(page);
                             }
                         }
                     }
+
+                    i++;
+                    CurrentEntryChanged(i);
                 }
             }
+        }
+
+        public void LoadImage(string path)
+        {
+            BitmapImage page = new BitmapImage();
+            page.BeginInit();
+            page.CacheOption = BitmapCacheOption.OnDemand;
+            page.UriSource = new Uri(path);
+            page.EndInit();
+            page.Freeze();
+            this.Pages.Add(page);
         }
 
         public bool FirstPage()

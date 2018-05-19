@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace CBookReader
 {
@@ -68,6 +69,21 @@ namespace CBookReader
             this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grab.cur");
             this.pageCountLabel.Content = "/0";
             this.pageNumberTextBox.Text = "0";
+
+            this.ComicBook.EntriesCountChanged += ((i) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.progressBar.Visibility = Visibility.Visible;
+                    this.progressBar.Minimum = 0;
+                    this.progressBar.Maximum = i;
+                });
+            });
+
+            this.ComicBook.CurrentEntryChanged += ((i) =>
+            {
+                this.Dispatcher.Invoke(() => this.progressBar.Value = i);
+            });
 
             this.ComicBook.CurrentPageChanged += (() =>
             {
@@ -177,51 +193,63 @@ namespace CBookReader
 
             if (ofd.ShowDialog() == true)
             {
+                this.nextPageMenuItem.IsEnabled = true;
+                this.lastPageMenuItem.IsEnabled = true;
                 this.ComicBook.Pages.Clear();
+                this.progressBar.Visibility = Visibility.Visible;
+                this.progressBar.Maximum = ofd.FileNames.Count();
 
-                foreach (string path in ofd.FileNames)
+                Task.Factory.StartNew(() =>
                 {
-                    string fileExt = path.Substring(path.LastIndexOf('.'));
+                    foreach (string path in ofd.FileNames)
+                    {
+                        string fileExt = path.Substring(path.LastIndexOf('.'));
 
-                    if (ComicBook.AviableArchiveFormats.Contains(fileExt))
-                    {
-                        this.ComicBook.UnpackAllPages(path);
-                    }
-                    else if (ComicBook.AviableComicFormats.Contains(fileExt))
-                    {
-                        this.ComicBook.UnpackAllPages(path);
-                    }
-                    else if (ComicBook.AviableImageFormats.Contains(fileExt))
-                    {
-                        BitmapImage page = new BitmapImage();
-                        page.BeginInit();
-                        page.CacheOption = BitmapCacheOption.OnDemand;
-                        page.UriSource = new Uri(path);
-                        page.EndInit();
-                        this.ComicBook.Pages.Add(page);
-                    }
-                }
-
-                if (this.ComicBook.Pages.Count != 0)
-                {
-                    foreach (BitmapSource page in this.ComicBook.Pages)
-                    {
-                        this.ComicBook.PagesBrightContrast.Add(new BrightContrast());
+                        if (ComicBook.AviableArchiveFormats.Contains(fileExt))
+                        {
+                            this.ComicBook.UnpackAllPages(path);
+                        }
+                        else if (ComicBook.AviableComicFormats.Contains(fileExt))
+                        {
+                            this.ComicBook.UnpackAllPages(path);
+                        }
+                        else if (ComicBook.AviableImageFormats.Contains(fileExt))
+                        {
+                            this.ComicBook.LoadImage(path);
+                            this.Dispatcher.Invoke(() => this.progressBar.Value++);
+                        }
                     }
 
                     BitmapSource source = this.ComicBook.Pages.First();
-                    this.image.Source = ImageTransformHelper.Stretch(
-                        source, source.PixelWidth, source.PixelHeight,
-                        out scaleX, out scaleY);
-                    this.image.Width = Math.Floor((double)source.PixelWidth);
-                    this.image.Height = Math.Floor((double)source.PixelHeight);
-                    this.ComicBook.CurrentPage = 0;
-                    this.saveMenuItem.IsEnabled = true;
-                    this.saveAllMenuItem.IsEnabled = true;
-                    this.closeMenuItem.IsEnabled = true;
-                    this.pageCountLabel.Content = "/" + this.ComicBook.Pages.Count.ToString();
-                    this.pageNumberTextBox.Text = "1";
-                }
+                    int width = source.PixelWidth;
+                    int height = source.PixelHeight;
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        if (this.ComicBook.Pages.Count != 0)
+                        {
+                            this.progressBar.Visibility = Visibility.Collapsed;
+
+                            foreach (BitmapSource page in this.ComicBook.Pages)
+                            {
+                                this.ComicBook.PagesBrightContrast.Add(new BrightContrast());
+                            }
+
+                            this.image.Source = ImageTransformHelper.Stretch(
+                                source, width, height,
+                                out scaleX, out scaleY);
+
+                            this.image.Width = Math.Floor((double)width);
+                            this.image.Height = Math.Floor((double)Height);
+                            this.saveMenuItem.IsEnabled = true;
+                            this.saveAllMenuItem.IsEnabled = true;
+                            this.closeMenuItem.IsEnabled = true;
+                            this.pageCountLabel.Content = "/" + this.ComicBook.Pages.Count.ToString();
+                            this.pageNumberTextBox.Text = "1";
+                            this.ComicBook.CurrentPage = 0;
+                        }
+                    });
+                });
             }
         }
 
@@ -1007,8 +1035,11 @@ namespace CBookReader
 
         private void SetCurrentBrightContrast()
         {
-            this.Brightness = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage].Brightness;
-            this.Contrast = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage].Contrast;
+            if (this.ComicBook.CurrentPage > 0)
+            {
+                this.Brightness = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage].Brightness;
+                this.Contrast = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage].Contrast;
+            }
         }
 
         private void IncreaseZoomCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
