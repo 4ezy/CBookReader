@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
         SizeChanged="Window_SizeChanged" PreviewMouseWheel="Window_PreviewMouseWheel"
         PreviewKeyDown="Window_PreviewKeyDown" PreviewKeyUp="Window_PreviewKeyUp"
-        x:Name="mainWindow">
+        x:Name="mainWindow" Loaded="MainWindow_Loaded" Closing="MainWindow_Closing">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open"
                         CanExecute="OpenCmdCanExecute"
@@ -56,8 +56,13 @@
         <CommandBinding Command="NavigationCommands.DecreaseZoom"
                         CanExecute="DecreaseZoomCmdCanExecute"
                         Executed="DecreaseZoomCmdExecuted"/>
+        <CommandBinding Command="ApplicationCommands.Stop"
+                        CanExecute="StopCmdCanExecute"
+                        Executed="StopCmdExecuted"/>
     </Window.CommandBindings>
     <Window.InputBindings>
+        <KeyBinding Key="Esc"
+                    Command="ApplicationCommands.Stop"/>
         <KeyBinding Key="W"
                     Modifiers="Ctrl"
                     Command="ApplicationCommands.Close"/>

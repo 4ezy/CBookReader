@@ -34,6 +34,7 @@ namespace CBookReader
         private double scaleY;
         private static readonly double scaleStep = 0.05;
         private bool numberTextBoxFocusedForSearch = false;
+        private static readonly string optionsPath = "options.xml";
 
         public static readonly DependencyProperty BrightnessProperty =
             DependencyProperty.Register("Brightness", typeof(double),
@@ -379,9 +380,7 @@ namespace CBookReader
 
         private void FullscreenMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuItem item = sender as MenuItem;
-
-            if (item.IsChecked)
+            if (this.fullscreenMenuItem.IsChecked)
             {
                 this.Visibility = Visibility.Collapsed;
                 this.WindowState = WindowState.Maximized;
@@ -1035,7 +1034,8 @@ namespace CBookReader
 
         private void SetCurrentBrightContrast()
         {
-            if (this.ComicBook.CurrentPage > 0)
+            if (this.ComicBook.CurrentPage > 0 && 
+                this.ComicBook.CurrentPage < this.ComicBook.Pages.Count)
             {
                 this.Brightness = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage].Brightness;
                 this.Contrast = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage].Contrast;
@@ -1109,6 +1109,58 @@ namespace CBookReader
         private void IncreaseZoomMenuItem_Click(object sender, RoutedEventArgs e)
         {
             this.Zoom(1);
+        }
+
+        private void StopCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void StopCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(optionsPath))
+            {
+                MainWindowOptions options = new MainWindowOptions();
+                options.Deserialize(optionsPath);
+
+                this.strWidthLargeMenuItem.IsChecked = options.ToWidthIfLarge;
+                this.strHeightLargeMenuItem.IsChecked = options.ToHeightIfLarge;
+                this.strWidthSmallMenuItem.IsChecked = options.ToWidthIfSmall;
+                this.strHeihtSmallMenuItem.IsChecked = options.ToHeigthIfSmall;
+                this.fullscreenMenuItem.IsChecked = options.Fullscreen;
+                this.FullscreenMenuItem_Click(this.fullscreenMenuItem, null);
+                this.menuVisibleMenuItem.IsChecked = options.MenuVisibile;
+                this.MenuVisibleMenuItem_Click(this.menuVisibleMenuItem, null);
+                this.arrowsVisibleMenuItem.IsChecked = options.ArrowsVisible;
+                this.ArrowsVisibleMenuItem_Click(this.arrowsVisibleMenuItem, null);
+                this.toolbarVisibleMenuItem.IsChecked = options.ToolbarVisible;
+                this.ToolbarVisibleMenuItem_Click(this.toolbarVisibleMenuItem, null);
+                this.verticalScrollVisibleMenuItem.IsChecked = options.VertScroll;
+                this.VerticalScrollVisibleMenuItem_Click(this.verticalScrollVisibleMenuItem, null);
+                this.horizontalScrollVisibleMenuItem.IsChecked = options.HorzScroll;
+                this.HorizontalScrollVisibleMenuItem_Click(this.horizontalScrollVisibleMenuItem, null);
+            }
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MainWindowOptions options = new MainWindowOptions(
+                this.strWidthLargeMenuItem.IsChecked,
+                this.strHeightLargeMenuItem.IsChecked,
+                this.strWidthSmallMenuItem.IsChecked,
+                this.strHeihtSmallMenuItem.IsChecked,
+                this.fullscreenMenuItem.IsChecked,
+                this.menuVisibleMenuItem.IsChecked,
+                this.arrowsVisibleMenuItem.IsChecked,
+                this.toolbarVisibleMenuItem.IsChecked,
+                this.verticalScrollVisibleMenuItem.IsChecked,
+                this.horizontalScrollVisibleMenuItem.IsChecked);
+            options.Serialize(optionsPath);
         }
     }
 }
