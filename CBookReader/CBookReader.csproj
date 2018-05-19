@@ -73,6 +73,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BrightContrast.cs" />
     <Compile Include="BrightContrastEffect.cs" />
     <Compile Include="ComicBook.cs" />
     <Compile Include="ImageProcessingWindow.xaml.cs">

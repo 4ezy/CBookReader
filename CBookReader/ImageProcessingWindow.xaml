@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBookReader"
         mc:Ignorable="d"
-        Title="ImageProcessingWindow" Height="175" Width="300"
-        ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        Title="ImageProcessingWindow" Height="190" Width="300"
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
+        Closing="Window_Closing">
     <Window.Resources>
         <Style x:Key="buttonStyle" TargetType="Button">
             <Setter Property="Width" Value="80"/>
@@ -40,10 +41,11 @@
                     Style="{StaticResource sliderStyle}"
                     ValueChanged="ContrastSlider_ValueChanged"/>
         </Grid>
+        <CheckBox x:Name="procAllChkBox" Content="Применить для всех изображений" Margin="0, 5, 0, 0"/>
         <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0">
-            <Button Content="ОК" Style="{StaticResource buttonStyle}"/>
-            <Button Content="Отмена" Style="{StaticResource buttonStyle}"
-                    Margin="10, 0, 0, 0"/>
+            <Button x:Name="okBtn" Content="ОК" Style="{StaticResource buttonStyle}" Click="OkBtn_Click"/>
+            <Button x:Name="cancelBtn" Content="Отмена" Style="{StaticResource buttonStyle}"
+                    Margin="10, 0, 0, 0" Click="CancelBtn_Click"/>
         </StackPanel>
     </StackPanel>
 </Window>

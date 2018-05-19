@@ -71,6 +71,7 @@ namespace CBookReader
 
             this.ComicBook.CurrentPageChanged += (() =>
             {
+                this.SetCurrentBrightContrast();
                 Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
                 this.ResizeImage(sz.Width, sz.Height);
 
@@ -154,28 +155,6 @@ namespace CBookReader
             };
         }
 
-        private void BackRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            bool isOk = this.ComicBook.BackPage();
-
-            if (isOk)
-            {
-                this.imageScroll.ScrollToEnd();
-                this.imageScroll.ScrollToRightEnd();
-            }
-        }
-
-        private void NextRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            bool isOk = this.ComicBook.NextPage();
-
-            if (isOk)
-            {
-                this.imageScroll.ScrollToHome();
-                this.imageScroll.ScrollToLeftEnd();
-            }
-        }
-
         private void OpenCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -225,6 +204,11 @@ namespace CBookReader
 
                 if (this.ComicBook.Pages.Count != 0)
                 {
+                    foreach (BitmapSource page in this.ComicBook.Pages)
+                    {
+                        this.ComicBook.PagesBrightContrast.Add(new BrightContrast());
+                    }
+
                     BitmapSource source = this.ComicBook.Pages.First();
                     this.image.Source = ImageTransformHelper.Stretch(
                         source, source.PixelWidth, source.PixelHeight,
@@ -610,38 +594,7 @@ namespace CBookReader
             if (!handle)
                 return;
 
-            if (scaleX >= scaleStep * 2 && scaleY >= scaleStep * 2)
-            {
-                if (e.Delta > 0)
-                {
-                    this.scaleX += scaleStep;
-                    this.scaleY += scaleStep;
-                }
-                else
-                {
-                    this.scaleX -= scaleStep;
-                    this.scaleY -= scaleStep;
-                }
-            }
-            else
-            {
-                if (e.Delta > 0)
-                {
-                    this.scaleX += scaleStep;
-                    this.scaleY += scaleStep;
-                }
-            }
-
-            Point pt = Mouse.GetPosition(this.imageScroll);
-            pt.X += this.imageScroll.HorizontalOffset;
-            pt.Y += this.imageScroll.VerticalOffset;
-            BitmapSource src = ImageTransformHelper.Scale(
-                this.ComicBook.Pages[this.ComicBook.CurrentPage],
-                this.scaleX, this.scaleY, pt.X, pt.Y);
-            this.image.Source = src;
-            this.image.Width = Math.Floor(src.Width);
-            this.image.Height = Math.Floor(src.Height);
-            this.IsScaled = true;
+            this.Zoom(e.Delta);
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e) =>
@@ -803,10 +756,21 @@ namespace CBookReader
             this.saveAllMenuItem.IsEnabled = false;
             this.closeMenuItem.IsEnabled = false;
             this.ComicBook.Pages.Clear();
+            this.ComicBook.PagesBrightContrast.Clear();
             this.ComicBook.CurrentPage = -1;
             this.image.Source = null;
             this.pageNumberTextBox.Text = "0";
             this.pageCountLabel.Content = "/0";
+        }
+
+        private void BackRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.PreviousPageCmdExecuted(null, null);
+        }
+
+        private void NextRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.NextPageCmdExecuted(null, null);
         }
 
         private void NextPageCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -1013,19 +977,107 @@ namespace CBookReader
 
         private void ImageProcessingMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ImageProcessingWindow imageProcWindow = new ImageProcessingWindow();
+            BrightContrast brightContrast = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage];
+            ImageProcessingWindow imageProcWindow = new ImageProcessingWindow(
+                brightContrast.Brightness, brightContrast.Contrast);
 
             imageProcWindow.BrightnessChanged += ((b) =>
             {
                 this.Brightness = b;
+                brightContrast.Brightness = b;
             });
 
             imageProcWindow.ContrastChanged += ((c) =>
             {
                 this.Contrast = c;
+                brightContrast.Contrast = c;
+            });
+
+            imageProcWindow.ProcessingForAllPagesChanged += (() =>
+            {
+                for (int i = 0; i < this.ComicBook.PagesBrightContrast.Count; i++)
+                {
+                    this.ComicBook.PagesBrightContrast[i].Brightness = this.Brightness;
+                    this.ComicBook.PagesBrightContrast[i].Contrast = this.Contrast;
+                }
             });
 
             imageProcWindow.Show();
+        }
+
+        private void SetCurrentBrightContrast()
+        {
+            this.Brightness = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage].Brightness;
+            this.Contrast = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage].Contrast;
+        }
+
+        private void IncreaseZoomCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void IncreaseZoomCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.Zoom(1);
+        }
+
+        private void DecreaseZoomCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void DecreaseZoomCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.Zoom(-1);
+        }
+
+        private void Zoom(int delta)
+        {
+            if (this.image.Source == null)
+                return;
+
+            if (scaleX >= scaleStep * 2 && scaleY >= scaleStep * 2)
+            {
+                if (delta > 0)
+                {
+                    this.scaleX += scaleStep;
+                    this.scaleY += scaleStep;
+                }
+                else
+                {
+                    this.scaleX -= scaleStep;
+                    this.scaleY -= scaleStep;
+                }
+            }
+            else
+            {
+                if (delta > 0)
+                {
+                    this.scaleX += scaleStep;
+                    this.scaleY += scaleStep;
+                }
+            }
+
+            Point pt = Mouse.GetPosition(this.imageScroll);
+            pt.X += this.imageScroll.HorizontalOffset;
+            pt.Y += this.imageScroll.VerticalOffset;
+            BitmapSource src = ImageTransformHelper.Scale(
+                this.ComicBook.Pages[this.ComicBook.CurrentPage],
+                this.scaleX, this.scaleY, pt.X, pt.Y);
+            this.image.Source = src;
+            this.image.Width = Math.Floor(src.Width);
+            this.image.Height = Math.Floor(src.Height);
+            this.IsScaled = true;
+        }
+
+        private void DecreaseZoomMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.Zoom(-1);
+        }
+
+        private void IncreaseZoomMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            this.Zoom(1);
         }
     }
 }

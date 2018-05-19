@@ -13,6 +13,7 @@ namespace CBookReader
     sealed class ComicBook
     {
         public List<BitmapSource> Pages { get; set; }
+        public List<BrightContrast> PagesBrightContrast { get; set; }
         public static List<string> AviableArchiveFormats { get; } = new List<string>
         {
             ".rar",
@@ -57,6 +58,7 @@ namespace CBookReader
         public ComicBook()
         {
             this.Pages = new List<BitmapSource>();
+            this.PagesBrightContrast = new List<BrightContrast>();
             this.currentPage = -1;
         }
 
