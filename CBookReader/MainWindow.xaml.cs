@@ -24,16 +24,16 @@ namespace CBookReader
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ComicBook ComicBook { get; set; }
+        private Book ComicBook { get; set; }
         private Point GrabPoint { get; set; }
         private double VertScrollOffset { get; set; }
         private double HorzScrollOffset { get; set; }
         private bool IsImageGrabbing { get; set; }
         private bool IsScaled { get; set; }
+        private bool SearchMode { get; set; }
         private double scaleX;
         private double scaleY;
         private static readonly double scaleStep = 0.05;
-        private bool numberTextBoxFocusedForSearch = false;
         private static readonly string optionsPath = "options.xml";
 
         public static readonly DependencyProperty BrightnessProperty =
@@ -66,25 +66,11 @@ namespace CBookReader
         public MainWindow()
         {
             InitializeComponent();
-            this.ComicBook = new ComicBook();
+            BookFactory bookFactory = new BookFactory();
+            this.ComicBook = bookFactory.CreateBook(BookTypes.ComicBook);
             this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grab.cur");
             this.pageCountLabel.Content = "/0";
             this.pageNumberTextBox.Text = "0";
-
-            this.ComicBook.EntriesCountChanged += ((i) =>
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    this.progressBar.Visibility = Visibility.Visible;
-                    this.progressBar.Minimum = 0;
-                    this.progressBar.Maximum = i;
-                });
-            });
-
-            this.ComicBook.CurrentEntryChanged += ((i) =>
-            {
-                this.Dispatcher.Invoke(() => this.progressBar.Value = i);
-            });
 
             this.ComicBook.CurrentPageChanged += (() =>
             {
@@ -202,24 +188,33 @@ namespace CBookReader
 
                 Task.Factory.StartNew(() =>
                 {
+                    List<string> archivesPathes = new List<string>();
+                    List<string> imagePathes = new List<string>();
+
                     foreach (string path in ofd.FileNames)
                     {
                         string fileExt = path.Substring(path.LastIndexOf('.'));
 
-                        if (ComicBook.AviableArchiveFormats.Contains(fileExt))
+                        if (this.ComicBook.AviableArchiveFormats.Contains(fileExt) ||
+                            this.ComicBook.AviableComicFormats.Contains(fileExt))
                         {
-                            this.ComicBook.UnpackAllPages(path);
+                            archivesPathes.Add(path);
                         }
-                        else if (ComicBook.AviableComicFormats.Contains(fileExt))
+                        else if (this.ComicBook.AviableImageFormats.Contains(fileExt))
                         {
-                            this.ComicBook.UnpackAllPages(path);
-                        }
-                        else if (ComicBook.AviableImageFormats.Contains(fileExt))
-                        {
-                            this.ComicBook.LoadImage(path);
-                            this.Dispatcher.Invoke(() => this.progressBar.Value++);
+                            imagePathes.Add(path);
                         }
                     }
+
+                    this.ComicBook.BitmapSouceLoader = new ArchiveLoader();
+                    this.ComicBook.BitmapSouceLoader.UploadedFilesCountChanged += UploadedFileCountChanged;
+                    this.ComicBook.BitmapSouceLoader.UploadedFilesNumberChanged += UploadedFileNumberChanged;
+                    this.ComicBook.Load(archivesPathes);
+
+                    this.ComicBook.BitmapSouceLoader = new ImageLoader();
+                    this.ComicBook.BitmapSouceLoader.UploadedFilesCountChanged += UploadedFileCountChanged;
+                    this.ComicBook.BitmapSouceLoader.UploadedFilesNumberChanged += UploadedFileNumberChanged;
+                    this.ComicBook.Load(imagePathes);
 
                     BitmapSource source = this.ComicBook.Pages.First();
                     int width = source.PixelWidth;
@@ -741,10 +736,10 @@ namespace CBookReader
                 this.pageNumberTextBox.Text = (this.ComicBook.CurrentPage + 1).ToString();
             }
 
-            if (numberTextBoxFocusedForSearch)
+            if (SearchMode)
             {
                 this.toolbarStackPanel.Visibility = Visibility.Collapsed;
-                numberTextBoxFocusedForSearch = false;
+                SearchMode = false;
             }
         }
 
@@ -830,7 +825,7 @@ namespace CBookReader
 
         private void PreviousPageCmdExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            bool isOk = this.ComicBook.BackPage();
+            bool isOk = this.ComicBook.PreviousPage();
 
             if (isOk)
             {
@@ -894,7 +889,7 @@ namespace CBookReader
 
         private void BackPageMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            bool isOk = this.ComicBook.BackPage();
+            bool isOk = this.ComicBook.PreviousPage();
 
             if (isOk)
             {
@@ -952,7 +947,7 @@ namespace CBookReader
             {
                 this.toolbarStackPanel.Visibility = Visibility.Visible;
                 this.pageNumberTextBox.Focus();
-                numberTextBoxFocusedForSearch = true;
+                SearchMode = true;
             }
             else
                 this.pageNumberTextBox.Focus();
@@ -1161,6 +1156,22 @@ namespace CBookReader
                 this.verticalScrollVisibleMenuItem.IsChecked,
                 this.horizontalScrollVisibleMenuItem.IsChecked);
             options.Serialize(optionsPath);
+        }
+
+        private void UploadedFileCountChanged(int i)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.progressBar.Visibility = Visibility.Visible;
+                this.progressBar.Minimum = 0;
+                this.progressBar.Maximum = i;
+                this.progressBar.Value = 0;
+            });
+        }
+
+        private void UploadedFileNumberChanged(int i)
+        {
+            this.Dispatcher.Invoke(() => this.progressBar.Value = i);
         }
     }
 }

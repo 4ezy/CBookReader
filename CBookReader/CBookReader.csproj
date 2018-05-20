@@ -73,13 +73,19 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ArchiveLoader.cs" />
+    <Compile Include="Book.cs" />
+    <Compile Include="BookFactory.cs" />
+    <Compile Include="BookTypes.cs" />
     <Compile Include="BrightContrast.cs" />
     <Compile Include="BrightContrastEffect.cs" />
     <Compile Include="ComicBook.cs" />
+    <Compile Include="IBitmapSourceLoader.cs" />
     <Compile Include="ImageProcessingWindow.xaml.cs">
       <DependentUpon>ImageProcessingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageTransformHelper.cs" />
+    <Compile Include="ImageLoader.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
