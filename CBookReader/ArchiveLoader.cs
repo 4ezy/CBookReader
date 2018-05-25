@@ -17,60 +17,67 @@ namespace CBookReader
         public List<BitmapSource> Load(List<string> pathes, 
             List<string> aviableFormats)
         {
-            int entriesCount = 0;
-
-            foreach (var path in pathes)
+            try
             {
-                using (Stream stream = File.OpenRead(path))
-                using (var reader = ReaderFactory.Open(stream))
+                int entriesCount = 0;
+
+                foreach (var path in pathes)
                 {
-                    while (reader.MoveToNextEntry())
+                    using (Stream stream = File.OpenRead(path))
+                    using (var reader = ReaderFactory.Open(stream))
                     {
-                        entriesCount++;
+                        while (reader.MoveToNextEntry())
+                        {
+                            entriesCount++;
+                        }
                     }
                 }
-            }
 
-            UploadedFilesCountChanged?.Invoke(entriesCount);
+                UploadedFilesCountChanged?.Invoke(entriesCount);
 
-            int i = 0;
-            List<BitmapSource> pages = new List<BitmapSource>();
+                int i = 0;
+                List<BitmapSource> pages = new List<BitmapSource>();
 
-            foreach (var path in pathes)
-            {
-                using (Stream stream = File.OpenRead(path))
-                using (var reader = ReaderFactory.Open(stream))
+                foreach (var path in pathes)
                 {
-                    while (reader.MoveToNextEntry())
+                    using (Stream stream = File.OpenRead(path))
+                    using (var reader = ReaderFactory.Open(stream))
                     {
-                        if (!reader.Entry.IsDirectory)
+                        while (reader.MoveToNextEntry())
                         {
-                            string ext = reader.Entry.Key.Substring(
-                                reader.Entry.Key.LastIndexOf('.'));
-
-                            if (aviableFormats.Contains(ext))
+                            if (!reader.Entry.IsDirectory)
                             {
-                                using (MemoryStream ms = new MemoryStream((int)reader.Entry.Size))
+                                string ext = reader.Entry.Key.Substring(
+                                    reader.Entry.Key.LastIndexOf('.'));
+
+                                if (aviableFormats.Contains(ext))
                                 {
-                                    reader.WriteEntryTo(ms);
-                                    ms.Position = 0;
-                                    BitmapImage page = new BitmapImage();
-                                    page.BeginInit();
-                                    page.StreamSource = ms;
-                                    page.CacheOption = BitmapCacheOption.OnLoad;
-                                    page.EndInit();
-                                    page.Freeze();
-                                    pages.Add(page);
+                                    using (MemoryStream ms = new MemoryStream((int)reader.Entry.Size))
+                                    {
+                                        reader.WriteEntryTo(ms);
+                                        ms.Position = 0;
+                                        BitmapImage page = new BitmapImage();
+                                        page.BeginInit();
+                                        page.StreamSource = ms;
+                                        page.CacheOption = BitmapCacheOption.OnLoad;
+                                        page.EndInit();
+                                        page.Freeze();
+                                        pages.Add(page);
+                                    }
                                 }
                             }
-                        }
 
-                        UploadedFilesNumberChanged?.Invoke(++i);
+                            UploadedFilesNumberChanged?.Invoke(++i);
+                        }
                     }
                 }
-            }
 
-            return pages;
+                return pages;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

@@ -352,7 +352,8 @@
         <ScrollViewer x:Name="imageScroll" Grid.Row="1"
                       VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Hidden"
-                      HorizontalContentAlignment="Stretch">
+                      HorizontalContentAlignment="Stretch"
+                      PreviewMouseDoubleClick="ImageScroll_PreviewMouseDoubleClick">
             <Image x:Name="image" Stretch="None"
                    PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown"
                    PreviewMouseLeftButtonUp="Image_PreviewMouseLeftButtonUp"

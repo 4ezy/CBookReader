@@ -15,29 +15,37 @@ namespace CBookReader
         public List<BitmapSource> Load(List<string> pathes,
             List<string> aviableFormats)
         {
-            List<BitmapSource> pages = new List<BitmapSource>();
-            UploadedFilesCountChanged?.Invoke(pathes.Count);
-            int i = 0;
-
-            foreach (var path in pathes)
+            try
             {
-                string ext = path.Substring(path.LastIndexOf('.'));
+                List<BitmapSource> pages = new List<BitmapSource>();
 
-                if (aviableFormats.Contains(ext))
+                UploadedFilesCountChanged?.Invoke(pathes.Count);
+                int i = 0;
+
+                foreach (var path in pathes)
                 {
-                    BitmapImage page = new BitmapImage();
-                    page.BeginInit();
-                    page.CacheOption = BitmapCacheOption.OnDemand;
-                    page.UriSource = new Uri(path);
-                    page.EndInit();
-                    page.Freeze();
-                    pages.Add(page);
+                    string ext = path.Substring(path.LastIndexOf('.'));
+
+                    if (aviableFormats.Contains(ext))
+                    {
+                        BitmapImage page = new BitmapImage();
+                        page.BeginInit();
+                        page.CacheOption = BitmapCacheOption.OnDemand;
+                        page.UriSource = new Uri(path);
+                        page.EndInit();
+                        page.Freeze();
+                        pages.Add(page);
+                    }
+
+                    UploadedFilesNumberChanged?.Invoke(++i);
                 }
 
-                UploadedFilesNumberChanged?.Invoke(++i);
+                return pages;
             }
-
-            return pages;
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
