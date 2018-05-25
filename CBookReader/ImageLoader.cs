@@ -21,6 +21,7 @@ namespace CBookReader
 
                 UploadedFilesCountChanged?.Invoke(pathes.Count);
                 int i = 0;
+                pathes.Sort();
 
                 foreach (var path in pathes)
                 {

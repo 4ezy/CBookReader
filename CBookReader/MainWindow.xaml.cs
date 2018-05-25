@@ -36,6 +36,7 @@ namespace CBookReader
         private bool beforeLoaded = false;
         private static readonly double scaleStep = 0.05;
         private static readonly string optionsPath = "options.xml";
+        private bool dbClick = false;
 
         public static readonly DependencyProperty BrightnessProperty =
             DependencyProperty.Register("Brightness", typeof(double),
@@ -559,7 +560,7 @@ namespace CBookReader
                     this.strWidthSmallMenuItem.IsChecked && page.PixelWidth < imageControlSize.Width) 
                 {
                     BitmapSource src = ImageTransformHelper.StretchToWidth(
-                        page, imageControlSize.Width, out scaleX, out scaleY);
+                        page, imageControlSize.Width, out double scaleX, out double scaleY);
                     this.image.Source = src;
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
@@ -571,7 +572,7 @@ namespace CBookReader
                     this.strHeihtSmallMenuItem.IsChecked && page.PixelHeight < imageControlSize.Height)
                 {
                     BitmapSource src = ImageTransformHelper.StretchToHeight(
-                        page, imageControlSize.Height, out scaleX, out scaleY);
+                        page, imageControlSize.Height, out double scaleX, out double scaleY);
                     this.image.Source = src;
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
@@ -581,11 +582,15 @@ namespace CBookReader
 
                 if (!isSizeChanged && this.image.Source != page)
                 {
-                    BitmapSource src = ImageTransformHelper.Stretch(
-                        page, page.PixelWidth, page.PixelHeight, out double scX, out double scY);
+                    BitmapSource src = page; //ImageTransformHelper.Stretch(
+                        //page, page.PixelWidth, page.PixelHeight, out double scX, out double scY);
 
                     if (IsScaled)
                         src = ImageTransformHelper.Scale(src, scaleX, scaleY);
+                    else
+                        src = ImageTransformHelper.Stretch(
+                            page, page.PixelWidth, page.PixelHeight,
+                            out double scX, out double scY);
 
                     this.image.Source = src;
                     this.image.Width = Math.Floor(src.Width);
@@ -661,6 +666,12 @@ namespace CBookReader
 
         private void Image_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (this.dbClick)
+            {
+                this.dbClick = false;
+                return;
+            }
+
             this.image.Cursor = MainWindow.LoadCursorFromResource("Resources\\Cursors\\grabbing.cur");
             this.HorzScrollOffset = this.imageScroll.HorizontalOffset;
             this.VertScrollOffset = this.imageScroll.VerticalOffset;
@@ -738,6 +749,9 @@ namespace CBookReader
                     {
                         this.imageScroll.ScrollToHome();
                         this.imageScroll.ScrollToLeftEnd();
+
+                        if (this.IsScaled)
+                            this.UpdateZoom();
                     }
                 }
             }
@@ -780,20 +794,11 @@ namespace CBookReader
 
                 BitmapSource src = this.ComicBook.Pages[this.ComicBook.CurrentPage];
 
-                if (IsScaled)
-                {
-                    src = ImageTransformHelper.Scale(src, scaleX, scaleY);
-                    this.UpdateZoom();
-                }
-                else
-                {
-                    src = ImageTransformHelper.Stretch(
-                            src, src.PixelWidth, src.PixelHeight, out double scX, out double scY);
-                    Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
-                    this.ResizeImage(sz.Width, sz.Height);
-                }
-
+                src = ImageTransformHelper.Stretch(
+                            src, src.PixelWidth, src.PixelHeight, out scaleX, out scaleY);
                 this.image.Source = src;
+                Size sz = this.GetTrueWindowSize(new Size(this.ActualWidth, this.ActualHeight));
+                this.ResizeImage(sz.Width, sz.Height);
             }
         }
 
@@ -1251,6 +1256,7 @@ namespace CBookReader
 
         private void ImageScroll_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            this.dbClick = true;
             this.NextPageCmdExecuted(null, null);
         }
 
