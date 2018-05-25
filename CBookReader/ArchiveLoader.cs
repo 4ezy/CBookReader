@@ -36,7 +36,7 @@ namespace CBookReader
                 UploadedFilesCountChanged?.Invoke(entriesCount);
 
                 int i = 0;
-                List<BitmapSource> pages = new List<BitmapSource>();
+                SortedList<string, BitmapSource> pages = new SortedList<string, BitmapSource>();
 
                 foreach (var path in pathes)
                 {
@@ -62,7 +62,7 @@ namespace CBookReader
                                         page.CacheOption = BitmapCacheOption.OnLoad;
                                         page.EndInit();
                                         page.Freeze();
-                                        pages.Add(page);
+                                        pages.Add(reader.Entry.Key, page);
                                     }
                                 }
                             }
@@ -72,7 +72,7 @@ namespace CBookReader
                     }
                 }
 
-                return pages;
+                return pages.Values.ToList();
             }
             catch (Exception)
             {
