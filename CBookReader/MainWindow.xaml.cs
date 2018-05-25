@@ -427,7 +427,10 @@ namespace CBookReader
         private void VerticalScrollVisibleMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (beforeLoaded)
+            {
+                beforeLoaded = false;
                 return;
+            }
 
             if (this.verticalScrollVisibleMenuItem.IsChecked)
             {
