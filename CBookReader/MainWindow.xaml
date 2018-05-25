@@ -203,6 +203,8 @@
                           InputGestureText="+" Click="IncreaseZoomMenuItem_Click"/>
                 <MenuItem x:Name="decreaseZoomMenuItem" Header="Уменьшить" StaysOpenOnClick="True"
                           InputGestureText="-" Click="DecreaseZoomMenuItem_Click"/>
+                <MenuItem x:Name="defaultZoomMenuItem" Header="Сбросить" StaysOpenOnClick="True"
+                          Click="DefaultZoomMenuItem_Click"/>
                 <Separator/>
                 <MenuItem x:Name="strWidthLargeMenuItem" Header="По ширине, если большое"
                           Style="{StaticResource resizingMenuItemStyle}"/>
@@ -296,6 +298,7 @@
                           Command="NavigationCommands.IncreaseZoom" InputGestureText="+"/>
                 <MenuItem Header="Уменьшить" StaysOpenOnClick="True"
                           Command="NavigationCommands.DecreaseZoom" InputGestureText="-"/>
+                <MenuItem Header="Сбросить" StaysOpenOnClick="True" Click="DefaultZoomMenuItem_Click"/>
                 <Separator/>
                 <MenuItem Header="По ширине, если большое" IsCheckable="True"
                           IsChecked="{Binding IsChecked, ElementName=strWidthLargeMenuItem}"

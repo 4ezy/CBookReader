@@ -30,7 +30,7 @@ namespace CBookReader
                     {
                         BitmapImage page = new BitmapImage();
                         page.BeginInit();
-                        page.CacheOption = BitmapCacheOption.OnDemand;
+                        page.CacheOption = BitmapCacheOption.OnLoad;
                         page.UriSource = new Uri(path);
                         page.EndInit();
                         page.Freeze();
