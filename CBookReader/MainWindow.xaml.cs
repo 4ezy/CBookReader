@@ -200,41 +200,49 @@ namespace CBookReader
                     {
                         string fileExt = path.Substring(path.LastIndexOf('.'));
 
-                        if (this.ComicBook.AviableArchiveFormats.Contains(fileExt) ||
-                            this.ComicBook.AviableComicFormats.Contains(fileExt))
+                        try
                         {
-                            archivesPathes.Add(path);
-                        }
-                        else if (this.ComicBook.AviableImageFormats.Contains(fileExt))
-                        {
-                            imagePathes.Add(path);
-                        }
-                    }
+                            if (this.ComicBook.AviableArchiveFormats.Contains(fileExt) ||
+                                this.ComicBook.AviableComicFormats.Contains(fileExt))
+                            {
+                                if (this.ComicBook.BitmapSouceLoader == null ||
+                                    this.ComicBook.BitmapSouceLoader.GetType() != typeof(ArchiveLoader))
+                                {
+                                    this.ComicBook.BitmapSouceLoader = new ArchiveLoader();
+                                    this.ComicBook.BitmapSouceLoader.UploadedFilesCountChanged += UploadedFileCountChanged;
+                                    this.ComicBook.BitmapSouceLoader.UploadedFilesNumberChanged += UploadedFileNumberChanged;
+                                }
 
-                    try
-                    {
-                        this.ComicBook.BitmapSouceLoader = new ArchiveLoader();
-                        this.ComicBook.BitmapSouceLoader.UploadedFilesCountChanged += UploadedFileCountChanged;
-                        this.ComicBook.BitmapSouceLoader.UploadedFilesNumberChanged += UploadedFileNumberChanged;
-                        this.ComicBook.Load(archivesPathes);
+                                List<string> p = new List<string> { path };
+                                this.ComicBook.Load(p);
+                            }
+                            else if (this.ComicBook.AviableImageFormats.Contains(fileExt))
+                            {
+                                if (this.ComicBook.BitmapSouceLoader == null ||
+                                    this.ComicBook.BitmapSouceLoader.GetType() != typeof(ImageLoader))
+                                {
+                                    this.ComicBook.BitmapSouceLoader = new ImageLoader();
+                                    this.ComicBook.BitmapSouceLoader.UploadedFilesCountChanged += UploadedFileCountChanged;
+                                    this.ComicBook.BitmapSouceLoader.UploadedFilesNumberChanged += UploadedFileNumberChanged;
+                                }
 
-                        this.ComicBook.BitmapSouceLoader = new ImageLoader();
-                        this.ComicBook.BitmapSouceLoader.UploadedFilesCountChanged += UploadedFileCountChanged;
-                        this.ComicBook.BitmapSouceLoader.UploadedFilesNumberChanged += UploadedFileNumberChanged;
-                        this.ComicBook.Load(imagePathes);
-                    }
-                    catch (Exception)
-                    {
-                        this.ComicBook.Pages.Clear();
-                        this.Dispatcher.Invoke(() =>
+                                List<string> p = new List<string> { path };
+                                this.ComicBook.Load(p);
+                            }
+                        }
+                        catch (Exception)
                         {
-                            this.nextPageMenuItem.IsEnabled = true;
-                            this.lastPageMenuItem.IsEnabled = true;
-                            this.progressBar.Visibility = Visibility.Collapsed;
-                        });
-                        MessageBox.Show("При загрузке файлов произошла ошибка", "Ошибка", 
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
+                            this.ComicBook.Pages.Clear();
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                this.nextPageMenuItem.IsEnabled = true;
+                                this.lastPageMenuItem.IsEnabled = true;
+                                this.progressBar.Visibility = Visibility.Collapsed;
+                            });
+                            MessageBox.Show("При загрузке файлов произошла ошибка", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
                     }
 
                     BitmapSource source = this.ComicBook.Pages.First();
