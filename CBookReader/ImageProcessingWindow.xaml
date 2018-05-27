@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBookReader"
         mc:Ignorable="d"
-        Title="ImageProcessingWindow" Height="190" Width="300"
+        Title="CBookReader - обработка" Height="190" Width="300"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
-        Closing="Window_Closing">
+        Closing="Window_Closing" Topmost="True">
     <Window.Resources>
         <Style x:Key="buttonStyle" TargetType="Button">
             <Setter Property="Width" Value="80"/>

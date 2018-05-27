@@ -1,0 +1,27 @@
+﻿<Window x:Class="CBookReader.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CBookReader"
+        mc:Ignorable="d"
+        Title="CBookReader - о программе" Height="190" Width="300"
+        ResizeMode="NoResize" WindowStartupLocation="Manual"
+        Topmost="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" 
+                    VerticalAlignment="Center">
+            <Label Content="CBookReader, version 1.0"/>
+            <Label Content="Copyright ©, 2018"/>
+        </StackPanel>
+        <Button Grid.Row="1" Content="Oк"
+                Margin="0,0,10,10" Width="80"
+                HorizontalAlignment="Right"
+                Click="Button_Click"
+                Height="24"/>
+    </Grid>
+</Window>

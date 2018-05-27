@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBookReader"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Height="450" Width="800"
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
         SizeChanged="Window_SizeChanged" PreviewMouseWheel="Window_PreviewMouseWheel"
         PreviewKeyDown="Window_PreviewKeyDown" PreviewKeyUp="Window_PreviewKeyUp"
-        x:Name="mainWindow" Loaded="MainWindow_Loaded" Closing="MainWindow_Closing">
+        x:Name="mainWindow" Loaded="MainWindow_Loaded" Closing="MainWindow_Closing"
+        Title="CBookReader">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Open"
                         CanExecute="OpenCmdCanExecute"
@@ -335,7 +336,7 @@
                           IsCheckable="True" StaysOpenOnClick="True"/>
             </MenuItem>
             <MenuItem Header="Справка">
-                <MenuItem Header="О программе"/>
+                <MenuItem x:Name="aboutMenuItem" Header="О программе" Click="AboutMenuItem_Click"/>
             </MenuItem>
         </Menu>
         <Rectangle x:Name="backRect" HorizontalAlignment="Left"

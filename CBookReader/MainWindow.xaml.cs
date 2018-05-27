@@ -174,7 +174,7 @@ namespace CBookReader
                 CheckFileExists = true,
                 Title = "Открыть",
                 Multiselect = true,
-                FilterIndex = 3,
+                FilterIndex = 1,
                 Filter =
                 "Комиксы (*.cbr,*.cbz,*.cbt,*.cb7)|*.cbr;*.cbz;*.cbt;*.cb7|" +
                 "Архивы (*.rar,*.zip,*.tar,*.7zip)|*.rar;*.zip;*.tar;*.7zip|" +
@@ -628,8 +628,7 @@ namespace CBookReader
 
                 if (!isSizeChanged && this.image.Source != page)
                 {
-                    BitmapSource src = page; //ImageTransformHelper.Stretch(
-                        //page, page.PixelWidth, page.PixelHeight, out double scX, out double scY);
+                    BitmapSource src = page;
 
                     if (IsScaled)
                         src = ImageTransformHelper.Scale(src, scaleX, scaleY);
@@ -641,6 +640,7 @@ namespace CBookReader
                     this.image.Source = src;
                     this.image.Width = Math.Floor(src.Width);
                     this.image.Height = Math.Floor(src.Height);
+                    this.UpdateZoom();
                 }
             }
         }
@@ -1116,7 +1116,10 @@ namespace CBookReader
 
             BrightContrast brightContrast = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage];
             ImageProcessingWindow imageProcWindow = new ImageProcessingWindow(
-                brightContrast.Brightness, brightContrast.Contrast);
+                brightContrast.Brightness, brightContrast.Contrast)
+            {
+                Owner = this
+            };
 
             imageProcWindow.BrightnessChanged += ((b) =>
             {
@@ -1319,6 +1322,12 @@ namespace CBookReader
                 this.image.Width = Math.Floor((double)width);
                 this.image.Height = Math.Floor((double)height);
             }
+        }
+
+        private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            AboutWindow aboutWindow = new AboutWindow() { Owner = this };
+            aboutWindow.Show();
         }
     }
 }
