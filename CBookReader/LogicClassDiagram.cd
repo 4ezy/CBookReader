@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CBookReader.Book">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAAAwCAAABAAABAgAAAAAADAAAAEAAAAABAAggACAAI=</HashCode>
+      <FileName>Book.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="BitmapSouceLoader" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CBookReader.ArchiveLoader" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAEAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ArchiveLoader.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CBookReader.ImageLoader" Collapsed="true">
+    <Position X="6.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAEAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImageLoader.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CBookReader.ComicBook">
+    <Position X="3" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAAAAAAAAABAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ComicBook.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CBookReader.BookFactory">
+    <Position X="5.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>BookFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CBookReader.ImageTransformHelper">
+    <Position X="7" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAABAAAAAAIAAAAAEAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>ImageTransformHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CBookReader.MainWindowOptions">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAEACAAAAAQAAAAAACBAAAIAQACIAAAEAAg=</HashCode>
+      <FileName>MainWindowOptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="CBookReader.IBitmapSourceLoader">
+    <Position X="4.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAEAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IBitmapSourceLoader.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="CBookReader.BookTypes" Collapsed="true">
+    <Position X="5.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BookTypes.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
