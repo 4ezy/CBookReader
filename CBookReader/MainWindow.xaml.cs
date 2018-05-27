@@ -37,6 +37,7 @@ namespace CBookReader
         private static readonly double scaleStep = 0.05;
         private static readonly string optionsPath = "options.xml";
         private bool dbClick = false;
+        private bool isBackgroundActive;
 
         public static readonly DependencyProperty BrightnessProperty =
             DependencyProperty.Register("Brightness", typeof(double),
@@ -162,7 +163,8 @@ namespace CBookReader
 
         private void OpenCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = true;
+            if (!isBackgroundActive)
+                e.CanExecute = true;
         }
 
         private void OpenCmdExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -187,6 +189,8 @@ namespace CBookReader
                 IsScaled = false;
                 this.nextPageMenuItem.IsEnabled = true;
                 this.lastPageMenuItem.IsEnabled = true;
+                this.saveAllMenuItem.IsEnabled = false;
+                this.isBackgroundActive = true;
                 this.ComicBook.Pages.Clear();
                 this.progressBar.Visibility = Visibility.Visible;
                 this.progressBar.Maximum = ofd.FileNames.Count();
@@ -195,6 +199,9 @@ namespace CBookReader
                 {
                     List<string> archivesPathes = new List<string>();
                     List<string> imagePathes = new List<string>();
+
+                    int i = 0;
+                    List<string> imgsP = new List<string>();
 
                     foreach (string path in ofd.FileNames)
                     {
@@ -218,16 +225,24 @@ namespace CBookReader
                             }
                             else if (this.ComicBook.AviableImageFormats.Contains(fileExt))
                             {
-                                if (this.ComicBook.BitmapSouceLoader == null ||
-                                    this.ComicBook.BitmapSouceLoader.GetType() != typeof(ImageLoader))
+                                if (i < ofd.FileNames.Count() - 1)
                                 {
-                                    this.ComicBook.BitmapSouceLoader = new ImageLoader();
-                                    this.ComicBook.BitmapSouceLoader.UploadedFilesCountChanged += UploadedFileCountChanged;
-                                    this.ComicBook.BitmapSouceLoader.UploadedFilesNumberChanged += UploadedFileNumberChanged;
+                                    imgsP.Add(path);
+                                    i++;
                                 }
+                                else
+                                {
+                                    if (this.ComicBook.BitmapSouceLoader == null ||
+                                    this.ComicBook.BitmapSouceLoader.GetType() != typeof(ImageLoader))
+                                    {
+                                        this.ComicBook.BitmapSouceLoader = new ImageLoader();
+                                        this.ComicBook.BitmapSouceLoader.UploadedFilesCountChanged += UploadedFileCountChanged;
+                                        this.ComicBook.BitmapSouceLoader.UploadedFilesNumberChanged += UploadedFileNumberChanged;
+                                    }
 
-                                List<string> p = new List<string> { path };
-                                this.ComicBook.Load(p);
+                                    imgsP.Add(path);
+                                    this.ComicBook.Load(imgsP);
+                                }
                             }
                         }
                         catch (Exception)
@@ -237,8 +252,10 @@ namespace CBookReader
                             {
                                 this.nextPageMenuItem.IsEnabled = true;
                                 this.lastPageMenuItem.IsEnabled = true;
+                                this.saveAllMenuItem.IsEnabled = true;
                                 this.progressBar.Visibility = Visibility.Collapsed;
                             });
+                            this.isBackgroundActive = false;
                             MessageBox.Show("При загрузке файлов произошла ошибка", "Ошибка",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
@@ -272,6 +289,8 @@ namespace CBookReader
                             this.pageCountLabel.Content = "/" + this.ComicBook.Pages.Count.ToString();
                             this.pageNumberTextBox.Text = "1";
                             this.ComicBook.CurrentPage = 0;
+                            this.isBackgroundActive = false;
+                            this.saveAllMenuItem.IsEnabled = true;
                         }
                     });
                 });
@@ -280,7 +299,7 @@ namespace CBookReader
 
         private void SaveCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (saveMenuItem.IsEnabled)
+            if (saveMenuItem.IsEnabled && !isBackgroundActive)
                 e.CanExecute = true;
             else
                 e.CanExecute = false;
@@ -352,53 +371,72 @@ namespace CBookReader
 
         private void SaveAll(ImageFormat format)
         {
-            System.Windows.Forms.FolderBrowserDialog fbd =
-                new System.Windows.Forms.FolderBrowserDialog()
+            if (isBackgroundActive)
+                return;
+
+            Forms.FolderBrowserDialog fbd =
+                new Forms.FolderBrowserDialog()
                 {
                     Description = "Выберите папку для сохранения файлов",
                     ShowNewFolderButton = true
                 };
 
-            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (fbd.ShowDialog() == Forms.DialogResult.OK)
             {
                 string ext = string.Empty;
+                this.isBackgroundActive = true;
+                this.UploadedFileCountChanged(this.ComicBook.Pages.Count);
+                this.progressBar.Visibility = Visibility.Visible;
+                this.saveAllMenuItem.IsEnabled = false;
 
-                for (int i = 0; i < this.ComicBook.Pages.Count; i++)
+                Task.Factory.StartNew(() =>
                 {
-                    BitmapEncoder encoder = null;
-
-                    switch (format)
+                    for (int i = 0; i < this.ComicBook.Pages.Count; i++)
                     {
-                        case ImageFormat.JPEG:
-                            encoder = new JpegBitmapEncoder();
-                            ext = ".jpg";
-                            break;
-                        case ImageFormat.PNG:
-                            encoder = new PngBitmapEncoder();
-                            ext = ".png";
-                            break;
-                        case ImageFormat.BMP:
-                            encoder = new BmpBitmapEncoder();
-                            ext = ".bmp";
-                            break;
-                        case ImageFormat.GIF:
-                            encoder = new GifBitmapEncoder();
-                            ext = ".gif";
-                            break;
-                        case ImageFormat.TIFF:
-                            encoder = new TiffBitmapEncoder();
-                            ext = ".tif";
-                            break;
-                        default:
-                            break;
+                        BitmapEncoder encoder = null;
+
+                        switch (format)
+                        {
+                            case ImageFormat.JPEG:
+                                encoder = new JpegBitmapEncoder();
+                                ext = ".jpg";
+                                break;
+                            case ImageFormat.PNG:
+                                encoder = new PngBitmapEncoder();
+                                ext = ".png";
+                                break;
+                            case ImageFormat.BMP:
+                                encoder = new BmpBitmapEncoder();
+                                ext = ".bmp";
+                                break;
+                            case ImageFormat.GIF:
+                                encoder = new GifBitmapEncoder();
+                                ext = ".gif";
+                                break;
+                            case ImageFormat.TIFF:
+                                encoder = new TiffBitmapEncoder();
+                                ext = ".tif";
+                                break;
+                            default:
+                                break;
+                        }
+
+                        encoder.Frames.Add(BitmapFrame.Create(this.ComicBook.Pages[i]));
+
+                        using (FileStream fs = new FileStream(
+                            fbd.SelectedPath + "\\" + i + ext, FileMode.Create))
+                            encoder.Save(fs);
+
+                        this.UploadedFileNumberChanged(++i);
                     }
 
-                    encoder.Frames.Add(BitmapFrame.Create(this.ComicBook.Pages[i]));
-
-                    using (FileStream fs = new FileStream(
-                        fbd.SelectedPath + "\\" + i + ext, FileMode.Create))
-                        encoder.Save(fs);
-                }
+                    this.isBackgroundActive = false;
+                    this.Dispatcher.Invoke(() => 
+                    {
+                        this.progressBar.Visibility = Visibility.Collapsed;
+                        this.saveAllMenuItem.IsEnabled = true;
+                    });
+                });
             }
         }
 
@@ -812,7 +850,7 @@ namespace CBookReader
 
         private void CloseCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (this.closeMenuItem.IsEnabled)
+            if (this.closeMenuItem.IsEnabled && !isBackgroundActive)
                 e.CanExecute = true;
             else
                 e.CanExecute = false;
@@ -827,6 +865,8 @@ namespace CBookReader
             this.ComicBook.PagesBrightContrast.Clear();
             this.ComicBook.CurrentPage = -1;
             this.image.Source = null;
+            this.Brightness = 0;
+            this.Contrast = 0;
             this.pageNumberTextBox.Text = "0";
             this.pageCountLabel.Content = "/0";
             this.backRect.Visibility = Visibility.Collapsed;
@@ -1071,6 +1111,9 @@ namespace CBookReader
 
         private void ImageProcessingMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (this.image.Source == null)
+                return;
+
             BrightContrast brightContrast = this.ComicBook.PagesBrightContrast[this.ComicBook.CurrentPage];
             ImageProcessingWindow imageProcWindow = new ImageProcessingWindow(
                 brightContrast.Brightness, brightContrast.Contrast);
@@ -1156,30 +1199,24 @@ namespace CBookReader
                 }
             }
 
-            Point pt = Mouse.GetPosition(this.imageScroll);
-            pt.X += this.imageScroll.HorizontalOffset;
-            pt.Y += this.imageScroll.VerticalOffset;
-            BitmapSource src = ImageTransformHelper.Scale(
-                this.ComicBook.Pages[this.ComicBook.CurrentPage],
-                this.scaleX, this.scaleY, pt.X, pt.Y);
-            this.image.Source = src;
-            this.image.Width = Math.Floor(src.Width);
-            this.image.Height = Math.Floor(src.Height);
-            this.IsScaled = true;
+            this.UpdateZoom();
         }
 
         private void UpdateZoom()
         {
-            Point pt = Mouse.GetPosition(this.imageScroll);
-            pt.X += this.imageScroll.HorizontalOffset;
-            pt.Y += this.imageScroll.VerticalOffset;
-            BitmapSource src = ImageTransformHelper.Scale(
-                this.ComicBook.Pages[this.ComicBook.CurrentPage],
-                this.scaleX, this.scaleY, pt.X, pt.Y);
-            this.image.Source = src;
-            this.image.Width = Math.Floor(src.Width);
-            this.image.Height = Math.Floor(src.Height);
-            this.IsScaled = true;
+            if (this.image.Source != null)
+            {
+                Point pt = Mouse.GetPosition(this.imageScroll);
+                pt.X += this.imageScroll.HorizontalOffset;
+                pt.Y += this.imageScroll.VerticalOffset;
+                BitmapSource src = ImageTransformHelper.Scale(
+                    this.ComicBook.Pages[this.ComicBook.CurrentPage],
+                    this.scaleX, this.scaleY, pt.X, pt.Y);
+                this.image.Source = src;
+                this.image.Width = Math.Floor(src.Width);
+                this.image.Height = Math.Floor(src.Height);
+                this.IsScaled = true;
+            }
         }
 
         private void DecreaseZoomMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1270,15 +1307,18 @@ namespace CBookReader
 
         private void DefaultZoomMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.IsScaled = false;
-            BitmapSource source = this.ComicBook.Pages[this.ComicBook.CurrentPage];
-            int width = source.PixelWidth;
-            int height = source.PixelHeight;
-            this.image.Source = ImageTransformHelper.Stretch(
-                                source, width, height,
-                                out scaleX, out scaleY);
-            this.image.Width = Math.Floor((double)width);
-            this.image.Height = Math.Floor((double)height);
+            if (this.image.Source != null)
+            {
+                this.IsScaled = false;
+                BitmapSource source = this.ComicBook.Pages[this.ComicBook.CurrentPage];
+                int width = source.PixelWidth;
+                int height = source.PixelHeight;
+                this.image.Source = ImageTransformHelper.Stretch(
+                                    source, width, height,
+                                    out scaleX, out scaleY);
+                this.image.Width = Math.Floor((double)width);
+                this.image.Height = Math.Floor((double)height);
+            }
         }
     }
 }
