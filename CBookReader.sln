@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CBookReader", "CBookReader\CBookReader.csproj", "{D096ADE7-D9CC-4D82-8B55-15E1A26627A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CBookReaderUnitTests", "CBookReaderUnitTests\CBookReaderUnitTests.csproj", "{31F4E77A-4007-4C37-94AD-9495F8251478}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D096ADE7-D9CC-4D82-8B55-15E1A26627A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D096ADE7-D9CC-4D82-8B55-15E1A26627A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D096ADE7-D9CC-4D82-8B55-15E1A26627A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31F4E77A-4007-4C37-94AD-9495F8251478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31F4E77A-4007-4C37-94AD-9495F8251478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31F4E77A-4007-4C37-94AD-9495F8251478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31F4E77A-4007-4C37-94AD-9495F8251478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
